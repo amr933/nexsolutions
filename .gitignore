@@ -1,0 +1,11 @@
+# Cloudflare Wrangler local cache / temp
+.wrangler/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/

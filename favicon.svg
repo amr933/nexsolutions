@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Nexus Solutions">
+  <defs>
+    <linearGradient id="nxFav" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#14c4bd"/>
+      <stop offset="1" stop-color="#0b8483"/>
+    </linearGradient>
+  </defs>
+  <path d="M32 5.5 L54.5 18.5 L54.5 45.5 L32 58.5 L9.5 45.5 L9.5 18.5 Z"
+        fill="url(#nxFav)" stroke="url(#nxFav)" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M21.5 44.5 V20 L42.5 44.5 V20"
+        fill="none" stroke="#ffffff" stroke-width="6.5"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <g fill="#e9b44c">
+    <circle cx="21.5" cy="20"   r="4.8"/>
+    <circle cx="42.5" cy="44.5" r="4.8"/>
+  </g>
+  <g fill="#0b2545">
+    <circle cx="21.5" cy="44.5" r="3.5"/>
+    <circle cx="42.5" cy="20"   r="3.5"/>
+  </g>
+</svg>
