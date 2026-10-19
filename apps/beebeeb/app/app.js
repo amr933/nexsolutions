@@ -3,7 +3,7 @@
 window.BB = (function () {
   "use strict";
 
-  var APK_VERSION = "2.0.1";
+  var APK_VERSION = "2.0.2";
   var MANIFEST_URL = "https://nexsolutions.pages.dev/apps/beebeeb/manifest.json";
   var LS = { pack: "bb_pack_v", stars: "bb_stars", startCount: "bb_starts", profile: "bb_profile_v1" };
 
@@ -280,7 +280,7 @@ window.BB = (function () {
       if (raw) {
         var p = JSON.parse(raw);
         /* الحزمة المحفوظة تُقبل فقط إن كانت بنفس إصدار الحزمة المدمجة أو أحدث — قديمة تُتجاهل */
-        if (p && p.v === PACK.v && p.letters && p.numbers) PACK = p;
+        if (p && p.v >= PACK.v && p.letters && p.numbers) PACK = p;
       }
     } catch (e) {}
     $("pack-version").textContent = PACK.v;

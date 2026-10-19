@@ -76,7 +76,7 @@ window.VOICE = {
  "ثَمانِيَة": "voice/nw08.mp3",
  "تِسْعَة": "voice/nw09.mp3",
  "عَشَرَة": "voice/nw10.mp3",
- "أهلاً بك في ورشة بيب بيب! هيا نلعب": "voice/p_home.mp3",
+ "أهلاً بك في ورشة بيـب بيـب! هيا نلعب": "voice/p_home.mp3",
  "هيّا نلعب الحروف!": "voice/p_openLetters.mp3",
  "هيّا نلعب الأرقام!": "voice/p_openNumbers.mp3",
  "اضغط على العربية": "voice/p_tapCar.mp3",

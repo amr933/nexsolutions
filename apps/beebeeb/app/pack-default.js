@@ -102,7 +102,7 @@ window.DEFAULT_PACK = {
     teach: "Say with me"
   },
   phrases: {
-    home: "أهلاً بك في ورشة بيب بيب! هيا نلعب",
+    home: "أهلاً بك في ورشة بيـب بيـب! هيا نلعب",
     openLetters: "هيّا نلعب الحروف!",
     openNumbers: "هيّا نلعب الأرقام!",
     tapCar: "اضغط على العربية",
