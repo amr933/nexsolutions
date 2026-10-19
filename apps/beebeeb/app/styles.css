@@ -727,3 +727,5 @@ body[data-gender="boy"] .sc-motif-boy { display:block; }
 .letter-card, .number-card { position:relative; overflow:hidden; }
 .lc-l, .nc-n { text-shadow:0 2px 0 rgba(255,255,255,.35); }
 .stage-prompt { text-shadow:0 2px 6px rgba(0,0,0,.18); }
+.bonus-hint { font-size:.95rem; color:#1F4E6B; background:rgba(255,255,255,.75); padding:6px 14px; border-radius:999px; font-weight:700; }
+.bonus-wrap.garage .bonus-hint { color:#EAF2FF; background:rgba(20,30,45,.6); }

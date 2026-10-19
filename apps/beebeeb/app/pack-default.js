@@ -115,8 +115,8 @@ window.DEFAULT_PACK = {
     counting: "",
     done: "أحسنت! رائع",
     teach: "قل معي",
-    bonusTitle: "دوّر على",
-    bonusFind: "الأشكال المموجهة",
-    bonusWin: "أحسنت! لقيت كلهم"
+    bonusTitle: "دوّر على الشكل ده",
+    bonusFind: "اضغط على كل اللي زيّه",
+    bonusWin: "أحسنت! لقيت الكل"
   }
 };

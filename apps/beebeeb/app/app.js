@@ -3,7 +3,7 @@
 window.BB = (function () {
   "use strict";
 
-  var APK_VERSION = "2.0.0";
+  var APK_VERSION = "2.0.1";
   var MANIFEST_URL = "https://nexsolutions.pages.dev/apps/beebeeb/manifest.json";
   var LS = { pack: "bb_pack_v", stars: "bb_stars", startCount: "bb_starts", profile: "bb_profile_v1" };
 
@@ -682,7 +682,7 @@ window.BB = (function () {
     }
     var dots = document.querySelectorAll("#setup-steps .dot");
     for (var j = 0; j < dots.length; j++) dots[j].classList.toggle("on", j <= setupStep);
-    var titles = ["مين هيلعب معانا؟", "ولد ولا بنت؟", "كام سنة عمره؟"];
+    var titles = ["مين هيلعب معانا؟", "ولد ولا بنت؟", "كام سنة عمر الطفل؟"];
     var subs = ["اكتب اسم الطفل عشان نبدأ", "هنختار الألعاب والألوان المناسبة", "العمر يختار نمط التمارين المناسب"];
     if ($("setup-title")) $("setup-title").textContent = titles[setupStep];
     if ($("setup-sub")) $("setup-sub").textContent = subs[setupStep];
@@ -762,6 +762,7 @@ window.BB = (function () {
       '<div class="bonus-wrap ' + (isGirl ? "garden" : "garage") + '">' +
         '<span class="stage-prompt">' + esc(PH("bonusTitle")) + ' <b class="bonus-target">' + target + "</b></span>" +
         '<div class="bonus-grid" id="bonus-grid" style="--cols:' + cols + '"></div>' +
+        '<span class="bonus-hint">' + esc(PH("bonusFind")) + "</span>" +
       "</div>", "bonus-body");
     var grid = $("bonus-grid"), found = 0;
     cells.forEach(function (c) {
