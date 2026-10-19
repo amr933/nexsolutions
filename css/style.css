@@ -306,15 +306,51 @@ p{color:var(--ink-soft)}
 .why-card p{font-size:.92rem}
 
 /* ---------- تواصل ---------- */
+.contact-layout{display:grid;grid-template-columns:.85fr 1.15fr;gap:22px;align-items:start}
 .contact-card{
-  display:flex;align-items:center;justify-content:space-between;gap:30px;flex-wrap:wrap;
+  display:flex;flex-direction:column;align-items:flex-start;
   background:linear-gradient(135deg,#0f2e6e,#1d4ed8 55%,#0ea5e9);
-  border-radius:26px;padding:44px;color:#fff;box-shadow:var(--shadow-lg);
+  border-radius:26px;padding:34px;color:#fff;box-shadow:var(--shadow-lg);
 }
-.contact-text h2{color:#fff}
-.contact-text p{color:#dbe8ff;margin-top:12px;max-width:620px}
+.contact-card h3{color:#fff;font-size:1.22rem;line-height:1.5}
+.contact-card p{color:#dbe8ff;margin-top:12px}
+.contact-points{display:flex;flex-direction:column;gap:11px;margin-top:20px}
+.contact-points li{position:relative;padding-inline-start:27px;color:#eaf2ff;font-size:.92rem}
+.contact-points li::before{
+  content:"\2713";position:absolute;inset-inline-start:0;top:.25em;
+  width:19px;height:19px;border-radius:50%;background:rgba(255,255,255,.24);
+  display:grid;place-items:center;font-size:.68rem;font-weight:900;
+}
+.contact-card .contact-actions{margin-top:24px}
 .contact-actions{display:flex;gap:12px;flex-wrap:wrap}
 .contact-card .btn.ghost{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.4);color:#fff;direction:ltr}
+
+/* ---------- نموذج التواصل ---------- */
+.contact-form{
+  background:#fff;border:1px solid var(--line);border-radius:26px;
+  padding:30px;box-shadow:var(--shadow-sm);
+}
+.cf-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.cf-field{display:flex;flex-direction:column;gap:7px}
+.cf-field.full{grid-column:1/-1}
+.cf-label{font-weight:800;font-size:.86rem;color:var(--ink)}
+.cf-field input,.cf-field select,.cf-field textarea{
+  width:100%;font:inherit;font-size:.93rem;color:var(--ink);line-height:1.6;
+  background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:12px 14px;
+  transition:.18s border-color,.18s box-shadow,.18s background;
+}
+.cf-field textarea{resize:vertical;min-height:120px}
+.cf-field input:focus,.cf-field select:focus,.cf-field textarea:focus{
+  outline:none;background:#fff;border-color:var(--brand);
+  box-shadow:0 0 0 4px rgba(29,78,216,.12);
+}
+.cf-field input::placeholder,.cf-field textarea::placeholder{color:#9aa8bb}
+.cf-field input.err,.cf-field textarea.err{border-color:#dc2626;background:#fff5f5;box-shadow:none}
+.cf-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
+.cf-hint{font-size:.83rem;color:var(--muted);margin-top:14px;line-height:1.7}
+.cf-msg{margin-top:12px;font-size:.88rem;font-weight:800;border-radius:12px;padding:11px 14px;line-height:1.6}
+.cf-msg.ok{background:#ecfdf5;color:#067647;border:1px solid #a7f3d0}
+.cf-msg.bad{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca}
 
 /* ---------- الفوتر ---------- */
 .site-footer{background:#0a1729;color:#c9d7ea;padding:30px 0}
@@ -332,8 +368,8 @@ p{color:var(--ink-soft)}
 .to-top:hover{background:var(--brand-2)}
 
 /* ---------- ظهور تدريجي ---------- */
-.reveal{opacity:0;transform:translateY(22px);transition:opacity .55s ease,transform .55s ease}
-.reveal.in{opacity:1;transform:none}
+html.js .reveal{opacity:0;transform:translateY(22px);transition:opacity .55s ease,transform .55s ease}
+html.js .reveal.in{opacity:1;transform:none}
 
 /* =========================================================
    الاستجابة
@@ -346,6 +382,7 @@ p{color:var(--ink-soft)}
   .svc-grid{grid-template-columns:repeat(2,1fr)}
   .apps-grid{grid-template-columns:1fr}
   .about-grid{grid-template-columns:1fr}
+  .contact-layout{grid-template-columns:1fr}
 }
 @media (max-width:1100px){
   .nav a{padding:8px 11px;font-size:.9rem}
@@ -370,6 +407,8 @@ p{color:var(--ink-soft)}
   .hero{padding:44px 0 40px}
   .section{padding:52px 0}
   .contact-card{padding:28px 22px}
+  .contact-form{padding:24px 18px}
+  .cf-grid{grid-template-columns:1fr}
   .contact-card .btn{width:100%}
   .btn{width:100%}
   .hero-cta .btn,.p-actions .btn{width:auto;flex:1}

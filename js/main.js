@@ -1,11 +1,13 @@
 /* =========================================================
    نكسس سوليوشنز — سكربت الموقع
-   تبديل اللغة (عربي/إنجليزي) • قائمة الموبايل • حركات الظهور
+   اللغة الأساسية: الإنجليزية (LTR) • تبديل للعربية (RTL)
+   قائمة الموبايل • حركات الظهور • نموذج التواصل
    ========================================================= */
 (function () {
   "use strict";
 
   var WA_NUMBER = "201040350971";           // واتساب نكسس سوليوشنز
+  var MAIL = "eng.amraladin@gmail.com";
   var LS_LANG = "nexus_lang";
   var root = document.documentElement;
 
@@ -24,6 +26,13 @@
       if (v !== null) nodes[i].textContent = v;
     }
 
+    // النصوص التوضيحية داخل الحقول (Placeholder)
+    var phs = document.querySelectorAll("[data-ar-ph]");
+    for (var p = 0; p < phs.length; p++) {
+      var pv = phs[p].getAttribute("data-" + lang + "-ph");
+      if (pv !== null) phs[p].setAttribute("placeholder", pv);
+    }
+
     // العنوان والوصف
     var title = document.querySelector("title");
     if (title && title.getAttribute("data-" + lang)) {
@@ -38,6 +47,10 @@
     var btn = document.getElementById("langBtn");
     if (btn) btn.textContent = (lang === "ar") ? "EN" : "ع";
 
+    // وصف زر القائمة (لقارئ الشاشة)
+    var burger = document.getElementById("burger");
+    if (burger) burger.setAttribute("aria-label", lang === "ar" ? "القائمة" : "Menu");
+
     buildWhatsApp();
     try { localStorage.setItem(LS_LANG, lang); } catch (e) {}
   }
@@ -51,8 +64,8 @@
     for (var i = 0; i < links.length; i++) {
       var a = links[i];
       var msg = (lang === "ar")
-        ? "السلام عليكم، أنا مهتم بمنتجات نكسس سوليوشنز"
-        : "Hello, I am interested in Nexus Solutions products";
+        ? "السلام عليكم، أنا مهتم بخدمات نكسس سوليوشنز"
+        : "Hello, I am interested in Nexus Solutions services";
 
       var card = a.closest ? a.closest(".product-card") : null;
       if (card) {
@@ -70,7 +83,92 @@
     }
   }
 
-  /* ---------- 3) قائمة الموبايل ---------- */
+  /* ---------- 3) نموذج التواصل ---------- */
+  var CF_LABELS = {
+    ar: { name: "الاسم", contact: "وسيلة التواصل", service: "الخدمة المطلوبة", details: "التفاصيل",
+          subject: "طلب من موقع نكسس سوليوشنز", intro: "السلام عليكم، هذا طلب من نموذج الموقع:",
+          okWa: "تم تجهيز رسالتك — كمّل الإرسال في واتساب.",
+          okMail: "تم تجهيز بريد إلكتروني بالرسالة — كمّل الإرسال من برنامج البريد.",
+          bad: "من فضلك اكمل: الاسم ووسيلة التواصل وتفاصيل المشروع." },
+    en: { name: "Name", contact: "Contact", service: "Service", details: "Details",
+          subject: "Website enquiry — Nexus Solutions", intro: "Hello, this is an enquiry from the website form:",
+          okWa: "Your message is ready — finish sending it in WhatsApp.",
+          okMail: "An email with your message is ready — finish sending it in your mail app.",
+          bad: "Please fill in: your name, a way to reach you and the project details." }
+  };
+
+  function cfValue(id) {
+    var el = document.getElementById(id);
+    return el ? String(el.value || "").trim() : "";
+  }
+
+  function cfMessage(lang) {
+    var L = CF_LABELS[lang];
+    return L.intro + "\n\n" +
+      L.name + ": " + cfValue("cf-name") + "\n" +
+      L.contact + ": " + cfValue("cf-contact") + "\n" +
+      L.service + ": " + cfValue("cf-service") + "\n" +
+      L.details + ": " + cfValue("cf-details");
+  }
+
+  function cfShow(kind, text) {
+    var box = document.getElementById("cfMsg");
+    if (!box) return;
+    box.className = "cf-msg " + kind;
+    box.textContent = text;
+    box.hidden = false;
+  }
+
+  function cfValidate(lang) {
+    var fields = ["cf-name", "cf-contact", "cf-details"];
+    var bad = false;
+    for (var i = 0; i < fields.length; i++) {
+      var el = document.getElementById(fields[i]);
+      if (!el) continue;
+      var empty = !String(el.value || "").trim();
+      el.classList.toggle("err", empty);
+      if (empty && !bad) { try { el.focus(); } catch (e) {} bad = true; }
+    }
+    if (bad) cfShow("bad", CF_LABELS[lang].bad);
+    return !bad;
+  }
+
+  function initForm() {
+    var form = document.getElementById("contactForm");
+    if (!form) return;
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var lang = currentLang();
+      if (!cfValidate(lang)) return;
+      var url = "https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent(cfMessage(lang));
+      window.open(url, "_blank", "noopener");
+      cfShow("ok", CF_LABELS[lang].okWa);
+    });
+
+    var mailBtn = document.getElementById("cfMail");
+    if (mailBtn) {
+      mailBtn.addEventListener("click", function () {
+        var lang = currentLang();
+        if (!cfValidate(lang)) return;
+        var url = "mailto:" + MAIL +
+          "?subject=" + encodeURIComponent(CF_LABELS[lang].subject) +
+          "&body=" + encodeURIComponent(cfMessage(lang));
+        window.location.href = url;
+        cfShow("ok", CF_LABELS[lang].okMail);
+      });
+    }
+
+    // نشيل علامة الخطأ أول ما المستخدم يكتب
+    var inputs = form.querySelectorAll("input, textarea, select");
+    for (var i = 0; i < inputs.length; i++) {
+      inputs[i].addEventListener("input", function () {
+        this.classList.remove("err");
+      });
+    }
+  }
+
+  /* ---------- 4) قائمة الموبايل ---------- */
   function initNav() {
     var burger = document.getElementById("burger");
     var nav = document.getElementById("nav");
@@ -86,26 +184,33 @@
     });
   }
 
-  /* ---------- 4) حركات الظهور ---------- */
+  /* ---------- 5) حركات الظهور ---------- */
   function initReveal() {
     var items = document.querySelectorAll(".reveal");
-    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce || !("IntersectionObserver" in window)) {
+    function showAll() {
       for (var k = 0; k < items.length; k++) items[k].classList.add("in");
-      return;
     }
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce || !("IntersectionObserver" in window)) { showAll(); return; }
+
+    var fired = 0;
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (en) {
         if (en.isIntersecting) {
+          fired++;
           en.target.classList.add("in");
           io.unobserve(en.target);
         }
       });
     }, { threshold: 0.14, rootMargin: "0px 0px -40px 0px" });
     for (var i = 0; i < items.length; i++) io.observe(items[i]);
+
+    // شبكة أمان: لو المراقب ما اشتغلش لأي سبب، نُظهر المحتوى كلّه
+    // (المحتوى لا يجوز أن يبقى مخفيًا أبدًا)
+    window.setTimeout(function () { if (fired === 0) showAll(); }, 2500);
   }
 
-  /* ---------- 5) الرابط النشط + زر الصعود ---------- */
+  /* ---------- 6) الرابط النشط + زر الصعود ---------- */
   function initScrollSpy() {
     var links = Array.prototype.slice.call(document.querySelectorAll('.nav a[href^="#"]'));
     var toTop = document.getElementById("toTop");
@@ -133,7 +238,7 @@
   function boot() {
     var saved = null;
     try { saved = localStorage.getItem(LS_LANG); } catch (e) {}
-    setLang(saved || "ar");
+    setLang(saved || "en");
 
     var btn = document.getElementById("langBtn");
     if (btn) {
@@ -145,6 +250,7 @@
     initNav();
     initReveal();
     initScrollSpy();
+    initForm();
     buildWhatsApp();
   }
 
