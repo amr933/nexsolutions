@@ -3,7 +3,7 @@
 window.BB = (function () {
   "use strict";
 
-  var APK_VERSION = "1.3.0";
+  var APK_VERSION = "1.3.1";
   var MANIFEST_URL = "https://nexsolutions.pages.dev/apps/beebeeb/manifest.json";
   var LS = { pack: "bb_pack_v", stars: "bb_stars", startCount: "bb_starts" };
 
@@ -36,8 +36,10 @@ window.BB = (function () {
     if (curLang === "en" && PACK.phrasesEn && PACK.phrasesEn[key]) return PACK.phrasesEn[key];
     return (PACK.phrases && PACK.phrases[key]) || "";
   }
-  /* الاسم المنطوق للحرف: عربي كامل أو اللفظ الإنجليزي (Aye/Bee/…) */
-  function letterName(L) { return curLang === "en" ? (L.say || L.c) : L.n; }
+  /* الاسم المنطوق للحرف: متشكّل عربي (L.say) أو اللفظ الإنجليزي (Aye/Bee/…) */
+  function letterName(L) { return curLang === "en" ? (L.say || L.c) : (L.say || L.n); }
+  /* الاسم المعروض في الشاشات: العربي بدون تشكيل — الإنجليزي بنفس اللفظ */
+  function dispName(L) { return curLang === "en" ? (L.say || L.c) : (L.n || L.say); }
   function digitsOnly(s) { return String(s).replace(/[0-9]/g, function (d) { return AR_DIG[+d]; }); }
 
   /* ---------- ألوان ---------- */
@@ -435,7 +437,7 @@ window.BB = (function () {
       '<div class="win-wrap">' +
         '<div class="win-plate" style="--c:' + palette(currentLetter.idx) + '">' + esc(L.c) + "</div>" +
         '<div class="big-star">⭐</div>' +
-        '<div class="win-tt">' + esc(letterName(L) + " — " + L.w) + "</div>" +
+        '<div class="win-tt">' + esc(dispName(L) + " — " + L.w) + "</div>" +
         '<div class="win-btns">' +
           '<button class="round-btn" onclick="BB.replayLetter()">' + (curLang === "en" ? "🔁 Again" : "🔁 مرة أخرى") + "</button>" +
           '<button class="round-btn alt" onclick="BB.nextLetter()">' + (curLang === "en" ? "Next letter ▶️" : "الحرف التالي ▶️") + "</button>" +
