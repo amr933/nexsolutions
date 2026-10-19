@@ -37,6 +37,8 @@
 
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+/* الأقسام تفضل تحت الهيدر الملزوق عند الانتقال بالروابط */
+section[id]{scroll-margin-top:84px}
 body{
   font-family:"Segoe UI","Noto Kufi Arabic",Tahoma,Arial,system-ui,sans-serif;
   color:var(--ink); background:var(--bg); line-height:1.85;

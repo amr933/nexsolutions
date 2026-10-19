@@ -192,6 +192,41 @@
     });
   }
 
+  /* ---------- 4ب) روابط الأقسام والرجوع لأعلى ---------- */
+  // ملاحظة مهمة: الهيدر ملزوق (sticky)، والمتصفح يعتبر العنصر الملزوق
+  // ظاهرًا دائمًا فلا يمرّر إليه. لذلك نتولى التمرير بأنفسنا.
+  function scrollToY(y) {
+    try {
+      window.scrollTo({ top: y, behavior: "smooth" });
+    } catch (e) {
+      window.scrollTo(0, y);
+    }
+  }
+
+  function initAnchors() {
+    var links = document.querySelectorAll('a[href^="#"]');
+    for (var i = 0; i < links.length; i++) {
+      links[i].addEventListener("click", function (e) {
+        var href = this.getAttribute("href");
+        if (!href || href === "#") return;
+        var id = href.slice(1);
+        var target = document.getElementById(id);
+        if (!target) return;
+
+        e.preventDefault();
+
+        if (id === "top") {
+          scrollToY(0);
+        } else {
+          var y = target.getBoundingClientRect().top +
+                  (window.pageYOffset || document.documentElement.scrollTop || 0) - 78;
+          scrollToY(y < 0 ? 0 : y);
+        }
+        if (window.history && history.replaceState) history.replaceState(null, "", href);
+      });
+    }
+  }
+
   /* ---------- 5) حركات الظهور ---------- */
   function initReveal() {
     var items = document.querySelectorAll(".reveal");
@@ -256,6 +291,7 @@
     }
 
     initNav();
+    initAnchors();
     initReveal();
     initScrollSpy();
     initForm();
