@@ -584,3 +584,146 @@ button { font-family:inherit; border:none; cursor:pointer; background:none; }
   padding-right: max(16px, env(safe-area-inset-right));
 }
 .scr-head { padding-top: max(12px, env(safe-area-inset-top)); }
+
+/* =========================================================
+   v2.0.0 — Setup screen, child profile, themes, polish
+   ========================================================= */
+
+/* --- screen transition --- */
+.screen.active { animation:screenIn .26s ease both; }
+@keyframes screenIn { from { opacity:0; transform:translateY(10px) } to { opacity:1; transform:none } }
+
+/* --- theme: boy / girl --- */
+body[data-gender="girl"] .sc-sky { background:linear-gradient(180deg,#F7A8D8 0%,#FFC2E2 30%,#FFD9EC 62%,#FFECF5 88%,#FFF6FA 100%); }
+body[data-gender="girl"] .sc-sun { background:radial-gradient(circle at 36% 34%,#FFF0F7,#FFB3DD 58%,#FF7FC0); box-shadow:0 0 40px rgba(255,150,210,.85), 0 0 100px rgba(255,150,210,.45); }
+body[data-gender="girl"] .sc-hill { background:linear-gradient(180deg,#9BD98C,#6FBF6A); }
+body[data-gender="girl"] .sc-tree { background:radial-gradient(circle at 50% 35%,#FFC2E2,#F49AC8 70%,#DE7FB0); }
+body[data-gender="girl"] .sc-kerb { background:repeating-linear-gradient(90deg,#FFD3EA 0 18px,#FFB7DD 18px 36px); }
+body[data-gender="girl"] .sc-city i { background:linear-gradient(180deg,#FFC9E6,#F79BC9); }
+body[data-gender="girl"] body, body[data-gender="girl"] { background:#FFD9EC; color:#5B2340; }
+body[data-gender="girl"] .big-card { box-shadow:0 10px 22px rgba(160,40,110,.22); }
+
+/* --- setup screen --- */
+.setup-screen {
+  align-items:center; justify-content:center; padding:18px;
+  background:radial-gradient(circle at 50% 18%, #FFF7E0 0%, #BDEBFF 45%, #8FD9FF 100%);
+}
+.setup-card {
+  width:100%; max-width:520px; background:rgba(255,255,255,.94); border-radius:26px;
+  padding:22px 20px 26px; text-align:center; color:#123B4F;
+  box-shadow:0 18px 44px rgba(10,60,90,.28); border:3px solid #fff;
+}
+.setup-mascot { font-size:0; margin-bottom:6px; }
+.setup-mascot .veh { width:130px; }
+.setup-card h1 { font-size:1.45rem; margin-bottom:4px; }
+.setup-sub { color:#4A7A93; font-size:.95rem; margin-bottom:14px; }
+.setup-steps { display:flex; gap:8px; justify-content:center; margin-bottom:18px; }
+.setup-steps .dot { width:11px; height:11px; border-radius:50%; background:#CFE6F2; }
+.setup-steps .dot.on { background:#2F8FD8; transform:scale(1.15); }
+.name-input {
+  width:100%; font-family:inherit; font-size:1.35rem; font-weight:700; text-align:center;
+  padding:14px 12px; border-radius:16px; border:3px solid #9ED2F0; background:#fff; color:#123B4F;
+  margin-bottom:14px;
+}
+.name-input:focus { outline:none; border-color:#2F8FD8; }
+.big-btn {
+  width:100%; padding:15px; border-radius:16px; font-size:1.2rem; font-weight:800; color:#fff;
+  background:linear-gradient(180deg,#43A9F0,#2F7FCE); box-shadow:0 8px 0 #22679F, 0 12px 20px rgba(20,80,130,.28);
+  transition:transform .08s ease, box-shadow .08s ease;
+}
+.big-btn:active { transform:translateY(4px); box-shadow:0 4px 0 #22679F; }
+.choice-row { display:flex; gap:14px; }
+.choice-card {
+  flex:1; padding:18px 10px; border-radius:20px; background:#fff; border:4px solid #CFE6F2;
+  box-shadow:0 8px 18px rgba(20,80,130,.16); transition:transform .1s ease, border-color .1s ease;
+}
+.choice-card:active { transform:scale(.96); }
+.choice-card.sel { border-color:#2F8FD8; background:#EAF6FF; }
+.choice-ic { display:block; font-size:3.1rem; line-height:1.1; }
+.choice-tt { display:block; font-size:1.25rem; font-weight:800; margin-top:6px; }
+.age-row { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-bottom:18px; }
+.age-chip {
+  padding:12px 16px; border-radius:14px; font-size:1.05rem; font-weight:700; background:#fff;
+  border:3px solid #CFE6F2; color:#123B4F; box-shadow:0 5px 0 rgba(20,80,130,.12);
+}
+.age-chip.sel { background:linear-gradient(180deg,#FFE9A8,#FFC94D); border-color:#E9A200; color:#5A3B00; }
+.setup-foot { display:flex; gap:12px; align-items:center; }
+.setup-foot .big-btn { flex:2; }
+.link-btn { flex:1; padding:12px; border-radius:14px; font-size:1rem; font-weight:700; color:#2F6F9F; background:#EAF6FF; }
+.setup-foot .link-btn { flex:0 0 auto; }
+
+/* --- home greeting --- */
+.home-hello {
+  display:flex; align-items:center; gap:10px; margin:0 0 6px; padding:8px 14px; align-self:flex-start;
+  background:rgba(255,255,255,.85); border-radius:999px; box-shadow:0 6px 14px rgba(10,60,90,.16);
+}
+.home-hello .avatar { font-size:1.6rem; line-height:1; }
+.home-hello .hello-tt { font-weight:800; font-size:1.05rem; color:#123B4F; }
+
+/* --- bonus card + bonus game --- */
+.bonus-card { background:linear-gradient(180deg,#FFD36E,#F5A623); color:#4A2B00; }
+.bonus-card .big-ic { font-size:2.4rem; }
+body[data-gender="girl"] .bonus-card { background:linear-gradient(180deg,#FFA8D4,#F56BB0); color:#4A0F33; }
+.bonus-wrap { display:flex; flex-direction:column; align-items:center; gap:12px; width:100%; }
+.bonus-target { font-size:2.2rem; vertical-align:middle; }
+.bonus-grid { display:grid; grid-template-columns:repeat(var(--cols,3),1fr); gap:12px; width:min(94vw,460px); }
+.bonus-cell {
+  aspect-ratio:1/1; border-radius:20px; font-size:2.6rem; background:#fff; line-height:1;
+  box-shadow:0 8px 0 rgba(20,80,130,.18), 0 12px 20px rgba(10,60,90,.18);
+  display:flex; align-items:center; justify-content:center; transition:transform .1s ease;
+}
+.bonus-cell:active { transform:scale(.94); }
+.bonus-cell.done { animation:pop .35s ease forwards; background:#DFF7E4; }
+.bonus-cell.shake { animation:shakeX .4s ease; }
+@keyframes pop { 50% { transform:scale(1.22) } 100% { transform:scale(1); opacity:.55 } }
+@keyframes shakeX { 25%{transform:translateX(-7px)} 50%{transform:translateX(7px)} 75%{transform:translateX(-4px)} }
+.bonus-wrap.garden { background:linear-gradient(180deg,#DFF6D8,#B7E8A8); border-radius:22px; padding:14px; }
+.bonus-wrap.garage { background:linear-gradient(180deg,#5A6472,#3C4552); border-radius:22px; padding:14px; }
+
+/* --- parent profile block --- */
+.parent-profile {
+  background:#F2F8FC; border:2px solid #CFE6F2; border-radius:16px; padding:12px 14px; margin:12px 0;
+}
+.parent-profile .pp-title { font-weight:800; margin-bottom:6px; color:#123B4F; }
+.parent-profile p { margin:3px 0; }
+
+/* --- tier rules: English cards hidden for the youngest --- */
+body[data-tier="1"] .letters-en-card, body[data-tier="1"] .numbers-en-card { display:none; }
+
+/* --- polish --- */
+.big-card:active, .letter-card:active, .number-card:active { transform:scale(.96); }
+.big-card, .letter-card, .number-card { transition:transform .08s ease; }
+
+/* --- v2.0.0 polish: motifs per gender + glossy cards --- */
+.big-card { position:relative; overflow:hidden; }
+.big-card::after {
+  content:""; position:absolute; inset-inline:0; top:0; height:38%;
+  background:linear-gradient(180deg,rgba(255,255,255,.38),rgba(255,255,255,0)); pointer-events:none;
+}
+.big-card > * { position:relative; z-index:1; }
+.sc-motif { position:absolute; inset:0; pointer-events:none; }
+.sc-motif i {
+  position:absolute; font-style:normal; font-size:26px; opacity:.9;
+  animation:motifFloat 6s ease-in-out infinite;
+}
+.sc-motif i:nth-child(1){ inset-inline-start:8%;  bottom:26%; }
+.sc-motif i:nth-child(2){ inset-inline-start:22%; bottom:34%; animation-delay:.8s; font-size:20px; }
+.sc-motif i:nth-child(3){ inset-inline-end:12%;  bottom:28%; animation-delay:1.6s; font-size:24px; }
+.sc-motif i:nth-child(4){ inset-inline-end:26%; bottom:36%; animation-delay:2.4s; font-size:18px; }
+@keyframes motifFloat { 0%,100%{ transform:translateY(0) rotate(-4deg) } 50%{ transform:translateY(-12px) rotate(5deg) } }
+body[data-gender="girl"] .sc-motif { display:none; }
+body[data-gender="boy"] .sc-motif { display:none; }
+body[data-gender="girl"] .sc-motif-girl { display:block; }
+body[data-gender="boy"] .sc-motif-boy { display:block; }
+.sc-motif { display:none; }
+.sc-motif-girl i::before { content:"🌸"; }
+.sc-motif-girl i:nth-child(2)::before { content:"🦋"; }
+.sc-motif-girl i:nth-child(3)::before { content:"🌷"; }
+.sc-motif-girl i:nth-child(4)::before { content:"🌼"; }
+.sc-motif-boy i::before { content:"⭐"; }
+.sc-motif-boy i:nth-child(2)::before { content:"🎈"; }
+.sc-motif-boy i:nth-child(3)::before { content:"🚀"; }
+.sc-motif-boy i:nth-child(4)::before { content:"🪁"; }
+.letter-card, .number-card { position:relative; overflow:hidden; }
+.lc-l, .nc-n { text-shadow:0 2px 0 rgba(255,255,255,.35); }
+.stage-prompt { text-shadow:0 2px 6px rgba(0,0,0,.18); }

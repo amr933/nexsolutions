@@ -16,6 +16,41 @@
 </head>
 <body>
 
+<!-- ===== شاشة الإعداد الأول: بيانات الطفل ===== -->
+<div id="scr-setup" class="screen setup-screen">
+  <div class="setup-card">
+    <div class="setup-mascot" id="setup-mascot" aria-hidden="true"></div>
+    <h1 id="setup-title">مين هيلعب معانا؟</h1>
+    <p class="setup-sub" id="setup-sub">اكتب اسم الطفل عشان نبدأ</p>
+    <div class="setup-steps" id="setup-steps"><span class="dot on"></span><span class="dot"></span><span class="dot"></span></div>
+
+    <div class="setup-pane" id="pane-name">
+      <input id="child-name" class="name-input" type="text" maxlength="20" placeholder="اسم الطفل" autocomplete="off" spellcheck="false">
+      <button class="big-btn" onclick="BB.setupNext()">التالي ▶️</button>
+    </div>
+
+    <div class="setup-pane hidden" id="pane-gender">
+      <div class="choice-row">
+        <button class="choice-card" id="ch-boy" onclick="BB.pickGender('boy')">
+          <span class="choice-ic">🚙</span><span class="choice-tt">ولد</span>
+        </button>
+        <button class="choice-card" id="ch-girl" onclick="BB.pickGender('girl')">
+          <span class="choice-ic">🌸</span><span class="choice-tt">بنت</span>
+        </button>
+      </div>
+      <button class="link-btn" onclick="BB.setupBack()">رجوع</button>
+    </div>
+
+    <div class="setup-pane hidden" id="pane-age">
+      <div class="age-row" id="age-row"></div>
+      <div class="setup-foot">
+        <button class="link-btn" onclick="BB.setupBack()">رجوع</button>
+        <button class="big-btn" onclick="BB.setupFinish()">يلا نلعب! 🎉</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ===== الشاشة الرئيسية : الورشة ===== -->
 <div id="scr-home" class="screen active">
   <div class="scene" aria-hidden="true">
@@ -28,6 +63,8 @@
     <div class="sc-cloud c4"></div>
     <div class="sc-bird b1"></div>
     <div class="sc-bird b2"></div>
+    <div class="sc-motif sc-motif-girl"><i></i><i></i><i></i><i></i></div>
+    <div class="sc-motif sc-motif-boy"><i></i><i></i><i></i><i></i></div>
     <div class="sc-city"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
     <div class="sc-hill h1"></div>
     <div class="sc-hill h2"></div>
@@ -40,6 +77,11 @@
   </div>
 
   <div class="home-wrap">
+    <div class="home-hello">
+      <span class="avatar" id="home-avatar">👦</span>
+      <span class="hello-tt" id="hello-tt">أهلاً يا بطل!</span>
+    </div>
+
     <div class="home-title">
       <div class="logo-holder">
         <span class="veh lg bob" id="home-logo"></span>
@@ -58,6 +100,11 @@
         <span class="big-ic">١٢٣</span>
         <span class="big-tt">الأرقام</span>
         <span class="big-sub" id="numbers-progress">هيا نلعب!</span>
+      </button>
+      <button class="big-card bonus-card" onclick="BB.openBonus()">
+        <span class="big-ic" id="bonus-icon">🚗</span>
+        <span class="big-tt" id="bonus-title">جراجي</span>
+        <span class="big-sub">لعبة تمييز</span>
       </button>
       <button class="big-card letters-en-card" onclick="BB.openLetters('en')">
         <span class="en-flag">ENGLISH</span>
@@ -155,6 +202,32 @@
   </div>
 </div>
 
+<!-- ===== اللعبة الإضافية (حديقة / جراج) ===== -->
+<div id="scr-bonus" class="screen">
+  <div class="scr-head dark">
+    <button class="back-btn" onclick="BB.goHome()">🏠</button>
+    <div class="game-title" id="bonus-screen-title">حديقتي</div>
+    <span class="stars-count" id="stars-bonus">⭐</span>
+  </div>
+  <div id="bonus-stage" class="lg-stage">
+    <div class="scene" aria-hidden="true">
+      <div class="sc-sky"></div>
+      <div class="sc-rays"></div>
+      <div class="sc-sun"></div>
+      <div class="sc-cloud c1"></div>
+      <div class="sc-cloud c3"></div>
+      <div class="sc-city"><i></i><i></i><i></i><i></i></div>
+      <div class="sc-hill h1"></div>
+      <div class="sc-hill h2"></div>
+      <div class="sc-tree t1"></div>
+      <div class="sc-tree t2"></div>
+      <div class="sc-road"></div>
+      <div class="sc-kerb"></div>
+    </div>
+    <div class="stage-body" id="bonus-body"></div>
+  </div>
+</div>
+
 <!-- ===== شاشة الأهل ===== -->
 <div id="scr-parent" class="screen list-screen">
   <div class="scr-head">
@@ -172,6 +245,15 @@
       <p><b>بيب بيب</b> — ورشة الحروف والأرقام</p>
       <p>الإصدار: <span id="app-version">1.2.0</span></p>
       <p>محتوى التطبيق: <span id="pack-version">1</span></p>
+    </div>
+    <div class="parent-profile">
+      <p class="pp-title">👶 بيانات الطفل</p>
+      <p>الاسم: <b id="pf-name">—</b></p>
+      <p>النوع: <b id="pf-gender">—</b></p>
+      <p>العمر: <b id="pf-age">—</b></p>
+      <p>مستوى التمارين: <b id="pf-tier">—</b></p>
+      <button class="parent-btn" onclick="BB.editProfile()">✏️ تعديل بيانات الطفل</button>
+      <button class="parent-btn danger" onclick="BB.resetProfile()">🗑️ مسح بيانات الطفل</button>
     </div>
     <button class="parent-btn" id="check-update-btn" onclick="BB.manualUpdate()">🔍 فحص التحديث</button>
     <button class="parent-btn danger" onclick="BB.resetProgress()">🗑️ تصفير التقدّم</button>

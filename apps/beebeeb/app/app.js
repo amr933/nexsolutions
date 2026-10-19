@@ -3,9 +3,43 @@
 window.BB = (function () {
   "use strict";
 
-  var APK_VERSION = "1.3.3";
+  var APK_VERSION = "2.0.0";
   var MANIFEST_URL = "https://nexsolutions.pages.dev/apps/beebeeb/manifest.json";
-  var LS = { pack: "bb_pack_v", stars: "bb_stars", startCount: "bb_starts" };
+  var LS = { pack: "bb_pack_v", stars: "bb_stars", startCount: "bb_starts", profile: "bb_profile_v1" };
+
+  /* ---------- ملف الطفل: الاسم والنوع والعمر ---------- */
+  var profile = { name: "", gender: "", age: 0 };
+  var tier = 2;                       /* 1 = سنتان–3 سنوات، 2 = 4 سنوات، 3 = 5 سنوات فأكثر */
+  var setupStep = 0;
+
+  /* إعدادات كل فئة عمرية */
+  var TIERS = {
+    1: { maxNumber: 5,  en: false, catch: { total: 4, needed: 2, spawnMs: 1400, durMs: 5200 }, trace: false, fs: 1.12 },
+    2: { maxNumber: 10, en: true,  catch: { total: 6, needed: 3, spawnMs: 1000, durMs: 4400 }, trace: false, fs: 1.0 },
+    3: { maxNumber: 10, en: true,  catch: { total: 8, needed: 4, spawnMs: 850,  durMs: 3800 }, trace: true,  fs: 0.94 }
+  };
+  function tierCfg() { return TIERS[tier] || TIERS[2]; }
+  function tierForAge(a) { return a <= 3 ? 1 : (a === 4 ? 2 : 3); }
+  function loadProfile() {
+    try {
+      var p = JSON.parse(localStorage.getItem(LS.profile) || "null");
+      if (p && p.name) {
+        profile = { name: String(p.name).slice(0, 20), gender: p.gender === "girl" ? "girl" : "boy", age: parseInt(p.age, 10) || 4 };
+        tier = tierForAge(profile.age);
+        return true;
+      }
+    } catch (e) {}
+    return false;
+  }
+  function saveProfile() { localStorage.setItem(LS.profile, JSON.stringify(profile)); }
+  function hasProfile() { return !!(profile.name && profile.gender && profile.age); }
+  /* لون/شكل التطبيق حسب نوع الطفل */
+  function applyTheme() {
+    var b = document.body;
+    b.dataset.gender = profile.gender || "boy";
+    b.dataset.tier = String(tier);
+    b.dataset.fs = String(tierCfg().fs);
+  }
 
   var PACK = (window.DEFAULT_PACK && window.DEFAULT_PACK.v) ? window.DEFAULT_PACK : { v: 2, letters: [], lettersEn: [], numbers: [], numbersEn: [], phrases: {}, phrasesEn: {} };
   var stars = { L: {}, N: {}, E: {}, M: {} };
@@ -58,12 +92,22 @@ window.BB = (function () {
   function vehSvg(name) { return (window.VEHICLES && VEHICLES.svg(name)) || ""; }
   function veh(name, cls) { return '<span class="veh' + (cls ? " " + cls : "") + '">' + vehSvg(name) + "</span>"; }
   function roadVeh(i, cls) { return veh(window.VEHICLES ? VEHICLES.roadName(i) : "sedan", cls); }
+  /* الكلمة والصورة حسب نوع الطفل: لكل حرف كلمة للولد (w) و another للبنت (wg) */
+  function wordOf(L) {
+    if (curLang === "en") return L.w;
+    return (profile.gender === "girl" && L.wg) ? L.wg : L.w;
+  }
+  function emojiOf(L) {
+    if (curLang === "en") return L.e || "🚗";
+    return (profile.gender === "girl" && L.eg) ? L.eg : (L.e || "🚗");
+  }
   /* أيقونة كلمة الحرف: مركبة مرسومة لو الكلمة مركبة، وإلا الإيموجي */
   function wordIcon(L) {
     var V = window.VEHICLES;
-    var v = V && (V.forWord(L.w) || V.wordArt(L.w));
+    var w = wordOf(L);
+    var v = V && (V.forWord(w) || V.wordArt(w));
     if (v) return '<span class="veh sm">' + v + "</span>";
-    return '<span class="chip-emoji">' + (L.e || "🚗") + "</span>";
+    return '<span class="chip-emoji">' + emojiOf(L) + "</span>";
   }
 
   /* ---------- audio ---------- */
@@ -195,6 +239,13 @@ window.BB = (function () {
   }
   function refreshHome() {
     buildHomeScene();
+    /* ترحيب بالطفل */
+    var hello = $("hello-tt"), av = $("home-avatar");
+    if (hello) hello.textContent = profile.name ? ("أهلاً يا " + profile.name + "!") : "أهلاً يا بطل!";
+    if (av) av.textContent = profile.gender === "girl" ? "👧" : "👦";
+    var bc = $("bonus-title"), bi = $("bonus-icon");
+    if (bc) bc.textContent = profile.gender === "girl" ? "حديقتي" : "جراجي";
+    if (bi) bi.textContent = profile.gender === "girl" ? "🌸" : "🚗";
     function prog(el, team, arr) {
       var done = 0;
       for (var k in stars[team]) { if (stars[team][k]) done++; }
@@ -317,7 +368,7 @@ window.BB = (function () {
       b.style.setProperty("--c2", palette2(i));
       b.innerHTML =
         '<span class="lc-head">' + roadVeh(i, "xs") + '<span class="lc-l">' + esc(L.c) + "</span></span>" +
-        '<span class="lc-w">' + esc(L.w) + "</span>" +
+        '<span class="lc-w">' + esc(wordOf(L)) + "</span>" +
         '<span class="lc-s">' + starStr(team, i) + "</span>";
       b.onclick = function () { startLetterGame(i); };
       g.appendChild(b);
@@ -335,7 +386,7 @@ window.BB = (function () {
     currentLetter = { idx: i, L: arr[i], team: teamL() };
     var L = currentLetter.L, n = (stars[currentLetter.team][i] || 0);
     $("lg-title").textContent = curLang === "en"
-      ? ("Letter " + L.c + " — " + L.w)
+      ? ("Letter " + L.c + " — " + wordOf(L))
       : ("حرف " + L.c + " — " + L.n);
     $("stars-lg").textContent = "⭐".repeat(Math.min(5, n + 1));
     show("scr-letter-game");
@@ -361,18 +412,18 @@ window.BB = (function () {
     var car = $("lg-car");
     car.onclick = function () {
       honk();
-      speakSeq([letterName(L), L.w], true);
+      speakSeq([letterName(L), wordOf(L)], true);
       var chip = document.querySelector("#lg-body .word-chip");
       if (!chip) {
         chip = document.createElement("div");
         chip.className = "word-chip";
         chip.style.setProperty("--c", col);
         chip.style.setProperty("--c2", palette2(idx));
-        chip.innerHTML = wordIcon(L) + "<span>" + esc(L.w) + "</span>";
+        chip.innerHTML = wordIcon(L) + "<span>" + esc(wordOf(L)) + "</span>";
         car.parentNode.appendChild(chip);
       }
       setTimeout(function () { $("lg-next").classList.add("show"); }, 700);
-      car.onclick = function () { honk(); speakSeq([letterName(L), L.w], true); };
+      car.onclick = function () { honk(); speakSeq([letterName(L), wordOf(L)], true); };
     };
     $("lg-next").onclick = buildLetterCatch;
     say(PH("tapCar"));
@@ -387,7 +438,8 @@ window.BB = (function () {
       '<div class="letter-plate" style="--c:' + col + '">' + esc(target) + "</div>" +
       '<div class="catch-name">' + esc(catchName) + "</div>" +
       "</div>");
-    var caught = 0, spawned = 0, TOTAL = 6, NEEDED = 3;
+    var caught = 0, spawned = 0, CFG = tierCfg().catch;
+    var TOTAL = CFG.total, NEEDED = CFG.needed;
     var timers = [];
     function spawn() {
       if (spawned >= TOTAL) return;
@@ -396,7 +448,7 @@ window.BB = (function () {
       var obs = isTarget ? target : pick(shuffle(letArr().filter(function (x) { return x.c !== target; }))).c;
       var car = document.createElement("button");
       car.className = "traffic-car";
-      var dur = 4200 + rand(1800);
+      var dur = CFG.durMs + rand(1800);
       var c1 = isTarget ? "#2E7D32" : "#546E7A", c2 = isTarget ? "#1B5E20" : "#37474F";
       car.innerHTML =
         '<span class="carry" style="--c:' + c1 + ";--c2:" + c2 + '">' + esc(obs) + "</span>" +
@@ -423,9 +475,9 @@ window.BB = (function () {
         }
       };
       timers.push(setTimeout(function () { done = true; car.remove(); }, dur + 400));
-      timers.push(setTimeout(spawn, 900 + rand(1400)));
+      timers.push(setTimeout(spawn, CFG.spawnMs + rand(700)));
     }
-    spawn(); setTimeout(spawn, 1400);
+    spawn(); setTimeout(spawn, CFG.spawnMs + 400);
     speakSeq([PH("catchTitle"), letterName(L)], true);
   }
 
@@ -437,14 +489,14 @@ window.BB = (function () {
       '<div class="win-wrap">' +
         '<div class="win-plate" style="--c:' + palette(currentLetter.idx) + '">' + esc(L.c) + "</div>" +
         '<div class="big-star">⭐</div>' +
-        '<div class="win-tt">' + esc(dispName(L) + " — " + L.w) + "</div>" +
+        '<div class="win-tt">' + esc(dispName(L) + " — " + wordOf(L)) + "</div>" +
         '<div class="win-btns">' +
           '<button class="round-btn" onclick="BB.replayLetter()">' + (curLang === "en" ? "🔁 Again" : "🔁 مرة أخرى") + "</button>" +
           '<button class="round-btn alt" onclick="BB.nextLetter()">' + (curLang === "en" ? "Next letter ▶️" : "الحرف التالي ▶️") + "</button>" +
         "</div>" +
       "</div>");
     confetti();
-    speakSeq([PH("done"), letterName(L), L.w]);
+    speakSeq([PH("done"), letterName(L), wordOf(L)]);
     buildLetters();
   }
   function replayLetter() { startLetterGame(currentLetter.idx); }
@@ -463,6 +515,7 @@ window.BB = (function () {
     var arr = numArr(), team = teamN();
     var g = $("numbers-grid"); g.innerHTML = "";
     arr.forEach(function (N, i) {
+      if (curLang === "ar" && N.v > tierCfg().maxNumber) return;   /* الأرقام المتاحة حسب عمر الطفل */
       var b = document.createElement("button");
       b.className = "number-card" + (stars[team][i] ? " done" : "");
       b.style.setProperty("--c", numColor(i));
@@ -581,6 +634,14 @@ window.BB = (function () {
     $("pg-q").textContent = toArabicDigits(a) + " + " + toArabicDigits(b);
     show("scr-parent");
   }
+  /* بيانات الطفل في شاشة الأهل */
+  function refreshParentInfo() {
+    var n = $("pf-name"), g = $("pf-gender"), a = $("pf-age"), t = $("pf-tier");
+    if (n) n.textContent = profile.name || "—";
+    if (g) g.textContent = profile.gender === "girl" ? "بنت" : (profile.gender === "boy" ? "ولد" : "—");
+    if (a) a.textContent = profile.age ? (profile.age + " سنوات") : "—";
+    if (t) t.textContent = profile.age ? (tier === 1 ? "مبتدئ (حتى 3 سنوات)" : (tier === 2 ? "متوسط (4 سنوات)" : "متقدّم (5 سنوات فأكثر)")) : "—";
+  }
   function toArabicDigits(x) {
     return String(x).replace(/[0-9]/g, function (d) { return "٠١٢٣٤٥٦٧٨٩"[d]; });
   }
@@ -589,6 +650,7 @@ window.BB = (function () {
     if (v === gateTarget) {
       $("parent-gate").classList.add("hidden");
       $("parent-panel").classList.remove("hidden");
+      refreshParentInfo();
     } else {
       $("pg-q").textContent = "?";
       toast("إجابة غير صحيحة — حاول مرة أخرى"); honk();
@@ -604,10 +666,142 @@ window.BB = (function () {
     }
   }
 
+  /* ---------- setup: بيانات الطفل (الاسم والنوع والعمر) ---------- */
+  var AGE_OPTS = [
+    { v: 2, t: "سنتان" },
+    { v: 3, t: "3 سنوات" },
+    { v: 4, t: "4 سنوات" },
+    { v: 5, t: "5 سنوات" },
+    { v: 6, t: "6 سنوات" }
+  ];
+  var pickedAge = 4;
+  function renderSetup() {
+    var panes = ["pane-name", "pane-gender", "pane-age"];
+    for (var i = 0; i < panes.length; i++) {
+      var p = $(panes[i]); if (p) p.classList.toggle("hidden", i !== setupStep);
+    }
+    var dots = document.querySelectorAll("#setup-steps .dot");
+    for (var j = 0; j < dots.length; j++) dots[j].classList.toggle("on", j <= setupStep);
+    var titles = ["مين هيلعب معانا؟", "ولد ولا بنت؟", "كام سنة عمره؟"];
+    var subs = ["اكتب اسم الطفل عشان نبدأ", "هنختار الألعاب والألوان المناسبة", "العمر يختار نمط التمارين المناسب"];
+    if ($("setup-title")) $("setup-title").textContent = titles[setupStep];
+    if ($("setup-sub")) $("setup-sub").textContent = subs[setupStep];
+    if (setupStep === 2) {
+      var row = $("age-row"); row.innerHTML = "";
+      AGE_OPTS.forEach(function (o) {
+        var b = document.createElement("button");
+        b.className = "age-chip" + (pickedAge === o.v ? " sel" : "");
+        b.textContent = o.t;
+        b.onclick = function () { pickedAge = o.v; renderSetup(); };
+        row.appendChild(b);
+      });
+    }
+    var m = $("setup-mascot");
+    if (m && !m.firstChild) m.innerHTML = vehSvg("sedan");
+  }
+  function setupNext() {
+    if (setupStep === 0) {
+      var n = (($("child-name") || {}).value || "").trim();
+      if (!n) { toast("اكتب اسم الطفل الأول 🙂"); return; }
+      profile.name = n.slice(0, 20);
+      setupStep = 1; renderSetup();
+    } else if (setupStep === 1) {
+      if (!profile.gender) { toast("اختر: ولد أم بنت"); return; }
+      setupStep = 2; pickedAge = profile.age || 4; renderSetup();
+    }
+  }
+  function setupBack() { if (setupStep > 0) { setupStep--; renderSetup(); } }
+  function pickGender(g) {
+    profile.gender = g;
+    var b = $("ch-boy"), c = $("ch-girl");
+    if (b) b.classList.toggle("sel", g === "boy");
+    if (c) c.classList.toggle("sel", g === "girl");
+    applyTheme();
+    setTimeout(function () { setupStep = 2; pickedAge = profile.age || 4; renderSetup(); }, 300);
+  }
+  function setupFinish() {
+    profile.age = pickedAge;
+    tier = tierForAge(pickedAge);
+    saveProfile(); applyTheme();
+    show("scr-home");
+    toast("أهلاً يا " + profile.name + "! 🎉", 2800);
+  }
+  function editProfile() {
+    setupStep = 0;
+    var inp = $("child-name"); if (inp) inp.value = profile.name;
+    show("scr-setup"); renderSetup();
+  }
+  function resetProfile() {
+    if (!confirm("هل تريد مسح بيانات الطفل (الاسم والنوع والعمر)؟")) return;
+    profile = { name: "", gender: "", age: 0 };
+    try { localStorage.removeItem(LS.profile); } catch (e) {}
+    setupStep = 0; show("scr-setup"); renderSetup();
+    toast("تم مسح بيانات الطفل");
+  }
+
+  /* ---------- اللعبة الإضافية: التمييز بين الأشكال (تختلف حسب النوع) ---------- */
+  var BONUS_ITEMS = {
+    boy: ["🚗", "🚙", "🚕", "🏎️", "🚓", "🚚", "🚜", "🛻"],
+    girl: ["🌸", "🌼", "🌷", "🌻", "🌺", "🪻", "🍀", "🦋"]
+  };
+  function openBonus() {
+    var isGirl = profile.gender === "girl";
+    var items = isGirl ? BONUS_ITEMS.girl : BONUS_ITEMS.boy;
+    var target = pick(items);
+    var matches = tier === 1 ? 2 : (tier === 2 ? 3 : 4);
+    var cols = tier === 1 ? 2 : 3;
+    var total = cols * cols;
+    var cells = [];
+    for (var i = 0; i < matches; i++) cells.push(target);
+    var others = items.filter(function (x) { return x !== target; });
+    while (cells.length < total) cells.push(pick(others));
+    cells = shuffle(cells);
+    $("bonus-screen-title").textContent = isGirl ? "حديقتي" : "جراجي";
+    show("scr-bonus");
+    stageHTML(
+      '<div class="bonus-wrap ' + (isGirl ? "garden" : "garage") + '">' +
+        '<span class="stage-prompt">' + esc(PH("bonusTitle")) + ' <b class="bonus-target">' + target + "</b></span>" +
+        '<div class="bonus-grid" id="bonus-grid" style="--cols:' + cols + '"></div>' +
+      "</div>", "bonus-body");
+    var grid = $("bonus-grid"), found = 0;
+    cells.forEach(function (c) {
+      var b = document.createElement("button");
+      b.className = "bonus-cell";
+      b.textContent = c;
+      b.onclick = function () {
+        if (b.classList.contains("done")) return;
+        if (c === target) {
+          b.classList.add("done"); found++; popSound();
+          if (found >= matches) setTimeout(bonusWin, 700);
+        } else {
+          b.classList.add("shake"); setTimeout(function () { b.classList.remove("shake"); }, 500);
+          honk();
+        }
+      };
+      grid.appendChild(b);
+    });
+    speakSeq([PH("bonusTitle"), PH("bonusFind")]);
+  }
+  function bonusWin() {
+    starSound();
+    stageHTML(
+      '<div class="win-wrap">' +
+        '<div class="big-star">⭐</div>' +
+        '<div class="win-tt">' + esc(PH("bonusWin")) + "</div>" +
+        '<div class="win-btns">' +
+          '<button class="round-btn" onclick="BB.openBonus()">' + (curLang === "en" ? "🔁 Again" : "🔁 مرة أخرى") + "</button>" +
+          '<button class="round-btn alt" onclick="BB.goHome()">' + (curLang === "en" ? "Home ▶️" : "الرئيسية ▶️") + "</button>" +
+        "</div>" +
+      "</div>", "bonus-body");
+    confetti();
+  }
+
   /* ---------- boot ---------- */
   function boot() {
     loadStars();
     loadLocalPack();
+    loadProfile();
+    applyTheme();
     buildLetters(); buildNumbers(); refreshStarsEls();
     buildHomeScene();
     $("app-version").textContent = APK_VERSION;
@@ -639,6 +833,13 @@ window.BB = (function () {
         try { navigator.serviceWorker.register("sw.js").catch(function () {}); } catch (e) {}
       });
     }
+    /* أول تشغيل: شاشة بيانات الطفل */
+    if (!hasProfile()) {
+      setupStep = 0;
+      var inp0 = $("child-name"); if (inp0) inp0.value = "";
+      show("scr-setup");
+      renderSetup();
+    }
   }
 
   document.addEventListener("DOMContentLoaded", boot);
@@ -649,9 +850,12 @@ window.BB = (function () {
     openLetters: openLetters,
     openNumbers: openNumbers,
     openParent: openParent,
+    openBonus: openBonus,
     checkGate: checkGate,
     resetProgress: resetProgress,
     manualUpdate: manualUpdate,
+    setupNext: setupNext, setupBack: setupBack, pickGender: pickGender, setupFinish: setupFinish,
+    editProfile: editProfile, resetProfile: resetProfile,
     replayLetter: replayLetter, nextLetter: nextLetter,
     replayNumber: replayNumber, nextNumber: nextNumber
   };
