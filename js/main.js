@@ -1,134 +1,156 @@
-/* ============================================================
-   Nexus Solutions — نكسس سوليوشنز
-   Language toggle (AR/EN) + UI interactions
-   ============================================================ */
+/* =========================================================
+   نكسس سوليوشنز — سكربت الموقع
+   تبديل اللغة (عربي/إنجليزي) • قائمة الموبايل • حركات الظهور
+   ========================================================= */
 (function () {
   "use strict";
 
-  var LANG_KEY = "nexus-lang";
-  var html = document.documentElement;
-  var langToggle = document.getElementById("langToggle");
+  var WA_NUMBER = "201040350971";           // واتساب نكسس سوليوشنز
+  var LS_LANG = "nexus_lang";
+  var root = document.documentElement;
 
-  /* ---------- Language ---------- */
-  function applyLang(lang) {
-    html.setAttribute("data-lang", lang);
-    html.setAttribute("lang", lang === "ar" ? "ar" : "en");
-    html.setAttribute("dir", lang === "ar" ? "rtl" : "ltr");
+  /* ---------- 1) اللغة ---------- */
+  function setLang(lang) {
+    lang = (lang === "en") ? "en" : "ar";
 
-    // data-ar / data-en  →  text content
-    document.querySelectorAll("[data-ar][data-en]").forEach(function (el) {
-      el.textContent = el.getAttribute("data-" + lang) || el.textContent;
-    });
+    root.setAttribute("data-lang", lang);
+    root.setAttribute("lang", lang);
+    root.setAttribute("dir", lang === "ar" ? "rtl" : "ltr");
 
-    // data-ar-ph / data-en-ph  →  placeholder
-    document.querySelectorAll("[data-ar-ph][data-en-ph]").forEach(function (el) {
-      el.setAttribute("placeholder", el.getAttribute("data-" + lang + "-ph") || "");
-    });
+    // النصوص
+    var nodes = document.querySelectorAll("[data-ar]");
+    for (var i = 0; i < nodes.length; i++) {
+      var v = nodes[i].getAttribute("data-" + lang);
+      if (v !== null) nodes[i].textContent = v;
+    }
 
-    if (langToggle) langToggle.textContent = lang === "ar" ? "EN" : "ع";
-    try { localStorage.setItem(LANG_KEY, lang); } catch (e) { /* private mode */ }
+    // العنوان والوصف
+    var title = document.querySelector("title");
+    if (title && title.getAttribute("data-" + lang)) {
+      title.textContent = title.getAttribute("data-" + lang);
+    }
+    var meta = document.querySelector('meta[name="description"]');
+    if (meta && meta.getAttribute("data-" + lang)) {
+      meta.setAttribute("content", meta.getAttribute("data-" + lang));
+    }
+
+    // زر التبديل يعرض اللغة الأخرى
+    var btn = document.getElementById("langBtn");
+    if (btn) btn.textContent = (lang === "ar") ? "EN" : "ع";
+
+    buildWhatsApp();
+    try { localStorage.setItem(LS_LANG, lang); } catch (e) {}
   }
 
-  var saved = null;
-  try { saved = localStorage.getItem(LANG_KEY); } catch (e) { /* ignore */ }
-  applyLang(saved === "ar" ? "ar" : "en"); // default: English LTR (Arabic available via toggle)
+  function currentLang() { return root.getAttribute("data-lang") === "en" ? "en" : "ar"; }
 
-  if (langToggle) {
-    langToggle.addEventListener("click", function () {
-      var next = html.getAttribute("data-lang") === "ar" ? "en" : "ar";
-      applyLang(next);
+  /* ---------- 2) روابط واتساب برسالة جاهزة ---------- */
+  function buildWhatsApp() {
+    var lang = currentLang();
+    var links = document.querySelectorAll("a.wa-link");
+    for (var i = 0; i < links.length; i++) {
+      var a = links[i];
+      var msg = (lang === "ar")
+        ? "السلام عليكم، أنا مهتم بمنتجات نكسس سوليوشنز"
+        : "Hello, I am interested in Nexus Solutions products";
+
+      var card = a.closest ? a.closest(".product-card") : null;
+      if (card) {
+        var h3 = card.querySelector("h3");
+        if (h3) {
+          var name = h3.textContent.trim();
+          msg = (lang === "ar")
+            ? "السلام عليكم، أنا مهتم بمنتج " + name
+            : "Hello, I am interested in " + name;
+        }
+      }
+      a.setAttribute("href", "https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent(msg));
+      a.setAttribute("target", "_blank");
+      a.setAttribute("rel", "noopener");
+    }
+  }
+
+  /* ---------- 3) قائمة الموبايل ---------- */
+  function initNav() {
+    var burger = document.getElementById("burger");
+    var nav = document.getElementById("nav");
+    if (!burger || !nav) return;
+
+    burger.addEventListener("click", function (e) {
+      e.stopPropagation();
+      nav.classList.toggle("open");
+    });
+    nav.addEventListener("click", function () { nav.classList.remove("open"); });
+    document.addEventListener("click", function (e) {
+      if (!nav.contains(e.target)) nav.classList.remove("open");
     });
   }
 
-  /* ---------- Header shadow on scroll ---------- */
-  var header = document.getElementById("siteHeader");
-  function onScroll() {
-    if (!header) return;
-    header.classList.toggle("scrolled", window.scrollY > 8);
-  }
-  window.addEventListener("scroll", onScroll, { passive: true });
-  onScroll();
-
-  /* ---------- Mobile nav ---------- */
-  var burger = document.getElementById("navBurger");
-  var nav = document.getElementById("mainNav");
-  if (burger && nav) {
-    burger.addEventListener("click", function () {
-      var open = nav.classList.toggle("open");
-      burger.setAttribute("aria-expanded", open ? "true" : "false");
-    });
-    nav.querySelectorAll("a").forEach(function (a) {
-      a.addEventListener("click", function () {
-        nav.classList.remove("open");
-        burger.setAttribute("aria-expanded", "false");
-      });
-    });
-  }
-
-  /* ---------- Scroll reveal ---------- */
-  var revealEls = document.querySelectorAll(".reveal");
-  if ("IntersectionObserver" in window) {
+  /* ---------- 4) حركات الظهور ---------- */
+  function initReveal() {
+    var items = document.querySelectorAll(".reveal");
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce || !("IntersectionObserver" in window)) {
+      for (var k = 0; k < items.length; k++) items[k].classList.add("in");
+      return;
+    }
     var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("visible");
-          io.unobserve(entry.target);
+      entries.forEach(function (en) {
+        if (en.isIntersecting) {
+          en.target.classList.add("in");
+          io.unobserve(en.target);
         }
       });
-    }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
-    revealEls.forEach(function (el) { io.observe(el); });
-  } else {
-    revealEls.forEach(function (el) { el.classList.add("visible"); });
+    }, { threshold: 0.14, rootMargin: "0px 0px -40px 0px" });
+    for (var i = 0; i < items.length; i++) io.observe(items[i]);
   }
 
-  /* ---------- Esteshari: request-app WhatsApp deep link ---------- */
-  var requestBtn = document.getElementById("requestAppBtn");
-  if (requestBtn) {
-    requestBtn.setAttribute("target", "_blank");
-    requestBtn.setAttribute("rel", "noopener");
+  /* ---------- 5) الرابط النشط + زر الصعود ---------- */
+  function initScrollSpy() {
+    var links = Array.prototype.slice.call(document.querySelectorAll('.nav a[href^="#"]'));
+    var toTop = document.getElementById("toTop");
+    var sections = links
+      .map(function (a) { return document.querySelector(a.getAttribute("href")); })
+      .filter(Boolean);
 
-    function setRequestHref() {
-      var isAr = html.getAttribute("data-lang") === "ar";
-      var msg = isAr
-        ? "السلام عليكم، أرغب في طلب نسخة من برنامج إستشاري (Esteshari) لإدارة مستندات المشاريع الهندسية."
-        : "Hello, I would like to request a copy of Esteshari for engineering project document management.";
-      requestBtn.href = "https://wa.me/201040350971?text=" + encodeURIComponent(msg);
-    }
-    setRequestHref();
-    // keep message language in sync when the user switches language
-    langToggle && langToggle.addEventListener("click", setRequestHref);
-  }
-
-  /* ---------- Contact form → WhatsApp ---------- */
-  var form = document.getElementById("contactForm");
-  if (form) {
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      var name = (document.getElementById("cfName") || {}).value || "";
-      var phone = (document.getElementById("cfPhone") || {}).value || "";
-      var msg = (document.getElementById("cfMsg") || {}).value || "";
-      name = name.trim(); phone = phone.trim(); msg = msg.trim();
-
-      if (!name || !msg) {
-        var isAr0 = html.getAttribute("data-lang") === "ar";
-        alert(isAr0 ? "من فضلك اكتب اسمك ورسالتك ✓" : "Please enter your name and message ✓");
-        return;
+    function onScroll() {
+      var y = window.pageYOffset || document.documentElement.scrollTop;
+      var current = sections[0];
+      for (var i = 0; i < sections.length; i++) {
+        if (sections[i].offsetTop - 120 <= y) current = sections[i];
       }
-
-      var isAr = html.getAttribute("data-lang") === "ar";
-      var full = isAr
-        ? "مرحبًا نكسس سوليوشنز 👋\n\nالاسم: " + name +
-          (phone ? "\nالهاتف: " + phone : "") +
-          "\n\nالرسالة: " + msg
-        : "Hello Nexus Solutions 👋\n\nName: " + name +
-          (phone ? "\nPhone: " + phone : "") +
-          "\n\nMessage: " + msg;
-
-      window.open("https://wa.me/201040350971?text=" + encodeURIComponent(full), "_blank", "noopener");
-    });
+      for (var j = 0; j < links.length; j++) {
+        var active = current && links[j].getAttribute("href") === "#" + current.id;
+        links[j].classList.toggle("active", !!active);
+      }
+      if (toTop) toTop.classList.toggle("show", y > 520);
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
   }
 
-  /* ---------- Footer year ---------- */
-  var yearEl = document.getElementById("year");
-  if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+  /* ---------- التشغيل ---------- */
+  function boot() {
+    var saved = null;
+    try { saved = localStorage.getItem(LS_LANG); } catch (e) {}
+    setLang(saved || "ar");
+
+    var btn = document.getElementById("langBtn");
+    if (btn) {
+      btn.addEventListener("click", function () {
+        setLang(currentLang() === "ar" ? "en" : "ar");
+      });
+    }
+
+    initNav();
+    initReveal();
+    initScrollSpy();
+    buildWhatsApp();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot);
+  } else {
+    boot();
+  }
 })();
