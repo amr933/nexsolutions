@@ -1,0 +1,22 @@
+{
+  "id": "/apps/beebeeb/app/",
+  "name": "بيب بيب — ورشة الحروف والأرقام",
+  "short_name": "بيب بيب",
+  "description": "تطبيق تعليمي عربي للأطفال من سن ٣ سنوات: الحروف الثمانية والعشرون والأرقام، بنطق عربي واضح داخل التطبيق، يعمل بدون إنترنت وبدون إعلانات.",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "fullscreen"],
+  "orientation": "portrait",
+  "background_color": "#4fc3f7",
+  "theme_color": "#4fc3f7",
+  "categories": ["education", "kids", "games"],
+  "icons": [
+    { "src": "icons/icon-180.png", "sizes": "180x180", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

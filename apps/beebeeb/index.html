@@ -4,52 +4,82 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>بيب بيب — تحميل التطبيق</title>
+<link rel="icon" href="icon.png">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:"Segoe UI",system-ui,sans-serif; background:linear-gradient(160deg,#4fc3f7,#b3ecff); min-height:100vh; color:#263238; padding:24px 16px 48px; }
-.wrap { max-width:640px; margin:0 auto; }
-.hero { text-align:center; margin-bottom:24px; }
-.hero .car { font-size:4rem; }
-h1 { font-size:2.2rem; color:#01579b; }
-.tag { display:inline-block; background:#e91e63; color:#fff; font-weight:700; padding:6px 18px; border-radius:999px; margin-top:8px; }
-.card { background:#fff; border-radius:20px; padding:22px; box-shadow:0 8px 24px rgba(0,0,0,.12); margin-bottom:16px; }
-.card h2 { color:#0288d1; font-size:1.25rem; margin-bottom:12px; }
-.dl-btn { display:block; text-align:center; background:#43a047; color:#fff; text-decoration:none; font-weight:900; font-size:1.25rem; padding:16px; border-radius:16px; box-shadow:0 4px 0 #2e7d32; }
-.dl-btn:hover { transform:translateY(-2px); }
+body { font-family:"Segoe UI",system-ui,sans-serif; background:linear-gradient(165deg,#38B6FF,#8FD9FF 45%,#D9F4FF); min-height:100vh; color:#1B3A4B; padding:24px 16px 40px; }
+.wrap { max-width:660px; margin:0 auto; }
+.hero { text-align:center; margin-bottom:22px; }
+.hero img { width:132px; height:132px; border-radius:30px; box-shadow:0 14px 30px rgba(10,70,110,.30); }
+h1 { font-size:2.3rem; color:#0B6FA8; margin-top:10px; text-shadow:0 2px 0 #fff; }
+.tag { display:inline-block; background:#E91E63; color:#fff; font-weight:800; padding:7px 20px; border-radius:999px; margin-top:10px; box-shadow:0 6px 14px rgba(233,30,99,.35); }
+.card { background:#fff; border-radius:22px; padding:22px; box-shadow:0 10px 26px rgba(10,70,110,.14); margin-bottom:16px; }
+.card h2 { color:#0288D1; font-size:1.25rem; margin-bottom:12px; }
+.card h2 span { font-size:1.1rem; }
+.dl-btn { display:block; text-align:center; background:linear-gradient(180deg,#4CD15A,#37B34A); color:#fff; text-decoration:none; font-weight:900; font-size:1.25rem; padding:17px; border-radius:18px; box-shadow:0 6px 0 #2A8C39; }
+.dl-btn:active { transform:translateY(3px); box-shadow:0 3px 0 #2A8C39; }
+.apple-btn { display:block; text-align:center; background:linear-gradient(180deg,#2E4A59,#1D333F); color:#fff; text-decoration:none; font-weight:900; font-size:1.15rem; padding:16px; border-radius:18px; box-shadow:0 6px 0 #101E25; margin-top:4px; }
+.apple-btn:active { transform:translateY(3px); box-shadow:0 3px 0 #101E25; }
 ol,ul { padding-right:22px; line-height:2; }
-.meta { color:#78909c; font-size:.85rem; }
-.warn { background:#fff8e1; border-right:4px solid #ffb300; padding:10px 14px; border-radius:10px; margin-top:10px; line-height:1.9; }
+.meta { color:#78909C; font-size:.86rem; }
+.warn { background:#FFF8E1; border-right:4px solid #FFB300; padding:11px 15px; border-radius:12px; margin-top:12px; line-height:1.9; }
+.note { background:#EFF8FE; border-right:4px solid #38B6FF; padding:11px 15px; border-radius:12px; margin-top:12px; line-height:1.9; }
 .features li { line-height:2; }
-.footer { text-align:center; margin-top:28px; color:#37474f; font-weight:700; direction:ltr; font-family:Arial,sans-serif; }
+.footer { text-align:center; margin-top:26px; color:#1B3A4B; font-weight:700; direction:ltr; font-family:Arial,sans-serif; }
 p { line-height:2; }
+.step { font-weight:800; color:#0B6FA8; }
+img.shot { width:100%; border-radius:16px; box-shadow:0 8px 20px rgba(10,70,110,.18); margin-top:6px; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="hero">
-    <div class="car">🚗</div>
+    <img src="icon.png" alt="بيب بيب">
     <h1>بيب بيب</h1>
     <div class="tag">ورشة الحروف والأرقام — للأطفال من سن ٣ سنوات</div>
   </div>
 
   <div class="card">
-    <a class="dl-btn" href="BeebBeeb-1.1.0.apk" download>⬇️ تحميل التطبيق (أندرويد)</a>
+    <h2><span>🤖</span> لأجهزة أندرويد</h2>
+    <a class="dl-btn" href="BeebBeeb-1.2.0.apk" download>⬇️ تحميل التطبيق (أندرويد)</a>
     <p class="meta" style="text-align:center;margin-top:10px">
-      الإصدار 1.1.0 &nbsp;•&nbsp; الحجم حوالي 1 ميجابايت &nbsp;•&nbsp; يعمل بدون إنترنت &nbsp;•&nbsp; بدون إعلانات
+      الإصدار 1.2.0 &nbsp;•&nbsp; الحجم حوالي 1 ميجابايت &nbsp;•&nbsp; يعمل بدون إنترنت &nbsp;•&nbsp; بدون إعلانات
     </p>
+    <div class="note">
+      🔄 التطبيق يحدّث نفسه من داخل الجهاز: أي محتوى جديد (حروف أو كلمات) يصل تلقائيًا عند توفر الإنترنت،
+      بدون تحميل الملف من جديد.
+    </div>
   </div>
 
   <div class="card">
-    <h2>ما الجديد في الإصدار 1.1.0</h2>
+    <h2><span></span> لأجهزة آيفون وآيباد (iPhone / iPad)</h2>
+    <a class="apple-btn" href="app/">🍎 افتح نسخة الآيفون الآن</a>
+    <ol style="margin-top:12px">
+      <li>اضغط الزر الأسود أعلاه ليُفتح التطبيق في متصفح <b>Safari</b>.</li>
+      <li>اضغط زر <b>المشاركة</b> (المربع الذي يخرج منه سهم ⬆️) أسفل الشاشة.</li>
+      <li>اختر <b>«إضافة إلى الشاشة الرئيسية»</b> ثم <b>«إضافة»</b>.</li>
+      <li>ستظهر أيقونة «بيب بيب» على شاشة الموبايل مثل أي تطبيق، ويفتح بدون إنترنت.</li>
+    </ol>
+    <div class="warn">
+      🔇 <b>مهم على الآيفون:</b> أخرِج الموبايل من <b>الوضع الصامت</b> (الزر الجانبي) لأن سفاري يُسكت صوت التطبيقات معه،
+      وكذلك ارفع مستوى الصوت. لا يوجد اهتزاز في نسخة الآيفون لأن سفاري لا يسمح به — أما الصوت فيعمل بشكل طبيعي.
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>ما الجديد في الإصدار 1.2.0</h2>
     <ul class="features">
-      <li>🔊 <b>النطق العربي مضمون</b> — أصوات الحروف الثمانية والعشرين والأرقام مدرجة داخل التطبيق نفسه، فينطقها بالعربية على أي جهاز، ولا يتوقف على وجود محرّك نطق في الموبايل.</li>
-      <li>🔤 <b>إصلاح اتجاهات الحروف</b> — كانت بعض الحروف والأرقام تظهر معكوسة كما في المرآة، والآن تُعرض في اتجاهها الصحيح.</li>
-      <li>🎨 <b>تصميم جديد</b> — مشهد طريق متحرك (سماء وشمس وسحاب ومدينة)، ولوحة بارزة لكل حرف، وعربيات بظلال ومؤثرات، ونجوم وورق احتفال عند إتمام كل مرحلة.</li>
+      <li>🚗 <b>السيارة الحمراء تظهر الآن عند كل حرف</b> — كانت بعض الحروف (مثل البطة والدرّاجة والصاروخ) تعرض صورة أخرى مكان السيارة، والآن السيارة موجودة دائمًا واللوحة عليها الحرف، وصورة الكلمة تظهر في بطاقة مستقلة بجانبها.</li>
+      <li>➡️ <b>السيارات تسير في الاتجاه الصحيح</b> — كانت السيارات تسير بالعكس (إلى الخلف)، وكل مركبات التطبيق أُعيد رسمها من الصفر ببرنامج رسم الأبعاد (SVG) لتواجه اتجاه سيرها دائمًا، وعجلاتها تدور مع الحركة.</li>
+      <li>🎨 <b>إخراج بصري جديد كليًا</b> — سماء متدرجة، وشمس بأشعة متحركة، ومدينة بنوافذ مضيئة، وتلال وأشجار، وطريق بخطوط صفراء متحركة، وظل ونور على كل مركبة، وألوان زاهية تناسب الطفل.</li>
+      <li>🚚 <b>لعبة الأرقام أَبهى</b> — شاحنة نقل لها منصة فارغة، ومع كل عربية تُحمَّل تراها تصعد على المنصة وتظهر على الشاشة، فترى الطفل يعدّ بعينه لا بأذنه فقط.</li>
+      <li>🖼️ <b>أيقونة جديدة</b> — سيارة كرتونية بظلال وعمق على طريق حقيقي، بدل الأيقونة المسطّحة القديمة.</li>
+      <li>🔤 إصلاح صورة كلمة «رُمّان» — كانت تعرض تفاحة (خطأ قديم)، والآن لها رسم صحيح خاص بها.</li>
     </ul>
   </div>
 
   <div class="card">
-    <h2>طريقة التثبيت</h2>
+    <h2>طريقة التثبيت (أندرويد)</h2>
     <ol>
       <li>اضغط زر «تحميل التطبيق» أعلاه، وسينزّل الملف إلى الموبايل.</li>
       <li>افتح الملف المنزّل (من شريط الإشعارات أو من مجلد التنزيلات).</li>
@@ -57,7 +87,8 @@ p { line-height:2; }
       <li>افتح التطبيق واستمتع مع طفلك 🚗</li>
     </ol>
     <div class="warn">
-      ⚠️ التطبيق ليس من متجر Google Play، لأنه يُوزَّع مباشرةً من Nexus Solutions. والتحديث الذاتي يعمل من داخل التطبيق، فيصل المحتوى الجديد للأهالي بدون متجر وبدون رابط جديد.
+      ⚠️ التطبيق ليس من متجر Google Play، لأنه يُوزَّع مباشرةً من Nexus Solutions. والحساب المُوقَّع به الإصدار الجديد هو <b>نفسه</b>
+      الذي وُقّع به الإصدار السابق، فيُحدَّث فوق القديم مباشرةً ولا يلزم حذفه.
     </div>
   </div>
 
@@ -65,11 +96,11 @@ p { line-height:2; }
     <h2>ماذا يوجد في التطبيق؟</h2>
     <ul class="features">
       <li>🔤 <b>الحروف الثمانية والعشرون</b> — اسم كل حرف ونطقه وكلمة تبدأ به، ثم لعبة الحروف المارة.</li>
-      <li>🔢 <b>الأرقام من 1 إلى 10</b> — تحميل الشاحنة والعد بصوت واضح.</li>
+      <li>🔢 <b>الأرقام من ١ إلى ١٠</b> — تحميل الشاحنة والعد بصوت واضح.</li>
       <li>⭐ نجوم مكافأة، وحفظ تلقائي لتقدّم الطفل على الجهاز نفسه.</li>
       <li>🔒 شاشة «للأهل» محمية بسؤال حسابي لا يفتحه الطفل.</li>
       <li>🔄 <b>تحديث تلقائي</b> — المحتوى الجديد ينزل من داخل التطبيق عند توفر الإنترنت.</li>
-      <li>📴 يعمل بدون إنترنت، وبدون إعلانات.</li>
+      <li>📴 يعمل بدون إنترنت، وبدون إعلانات، وبدون جمع أي بيانات عن الطفل.</li>
     </ul>
   </div>
 
@@ -79,7 +110,7 @@ p { line-height:2; }
       الواجهة مصممة لطفل عمر ثلاث سنوات: أزرار كبيرة، وعبارات قصيرة، والصوت يكرر الشرح في كل مرة.
       وإذا أخطأ الطفل فلا توجد رسالة خطأ — السيارة تصدر نغمة لطيفة ليحاول من جديد.
       فالهدف أن يكون اللعب ممتعًا لا امتحانًا.
-      وننصح بجعل أول جلسة مع طفلك لتتعلم معه طريقة اللعب، ثم يترك له التلعب وحده.
+      وننصح بأن تكون أول جلسة مع طفلك لتتعلم معه طريقة اللعب، ثم يُترك له يلعب وحده.
     </p>
   </div>
 

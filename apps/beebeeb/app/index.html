@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>بيب بيب — ورشة الحروف والأرقام</title>
+<link rel="stylesheet" href="styles.css">
+<!-- ===== تطبيق ويب مثبَّت (PWA): يعمل على الآيفون والأندرويد والكمبيوتر ===== -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#38B6FF">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="بيب بيب">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+</head>
+<body>
+
+<!-- ===== الشاشة الرئيسية : الورشة ===== -->
+<div id="scr-home" class="screen active">
+  <div class="scene" aria-hidden="true">
+    <div class="sc-sky"></div>
+    <div class="sc-rays"></div>
+    <div class="sc-sun"></div>
+    <div class="sc-cloud c1"></div>
+    <div class="sc-cloud c2"></div>
+    <div class="sc-cloud c3"></div>
+    <div class="sc-cloud c4"></div>
+    <div class="sc-bird b1"></div>
+    <div class="sc-bird b2"></div>
+    <div class="sc-city"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="sc-hill h1"></div>
+    <div class="sc-hill h2"></div>
+    <div class="sc-hill h3"></div>
+    <div class="sc-tree t1"></div>
+    <div class="sc-tree t2"></div>
+    <div class="sc-tree t3"></div>
+    <div class="sc-road"></div>
+    <div class="sc-kerb"></div>
+  </div>
+
+  <div class="home-wrap">
+    <div class="home-title">
+      <div class="logo-holder">
+        <span class="veh lg bob" id="home-logo"></span>
+      </div>
+      <h1>بيب بيب</h1>
+      <p class="sub">ورشة الحروف والأرقام</p>
+    </div>
+
+    <div class="home-cards">
+      <button class="big-card letters-card" onclick="BB.openLetters()">
+        <span class="big-ic">أ ب ت</span>
+        <span class="big-tt">الحروف</span>
+        <span class="big-sub" id="letters-progress">هيا نلعب!</span>
+      </button>
+      <button class="big-card numbers-card" onclick="BB.openNumbers()">
+        <span class="big-ic">١٢٣</span>
+        <span class="big-tt">الأرقام</span>
+        <span class="big-sub" id="numbers-progress">هيا نلعب!</span>
+      </button>
+    </div>
+
+    <div class="home-spacer"></div>
+
+    <div class="road-strip" id="home-road" aria-hidden="true"></div>
+
+    <div class="home-footer">
+      <button class="parent-link" onclick="BB.openParent()">🔑 للأهل</button>
+      <div class="copyright">All Rights Reserved - Nexus Solutions LTD</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== قائمة الحروف ===== -->
+<div id="scr-letters" class="screen list-screen">
+  <div class="scr-head">
+    <button class="back-btn" onclick="BB.goHome()">🏠</button>
+    <h2>حروفنا</h2>
+    <span class="stars-count" id="stars-letters">⭐ 0</span>
+  </div>
+  <div class="letters-grid" id="letters-grid"></div>
+</div>
+
+<!-- ===== لعبة الحرف ===== -->
+<div id="scr-letter-game" class="screen">
+  <div class="scr-head dark">
+    <button class="back-btn" onclick="BB.goHome()">🏠</button>
+    <div class="game-title" id="lg-title">حرف</div>
+    <span class="stars-count" id="stars-lg">⭐</span>
+  </div>
+  <div id="lg-stage" class="lg-stage">
+    <div class="scene" aria-hidden="true">
+      <div class="sc-sky"></div>
+      <div class="sc-rays"></div>
+      <div class="sc-sun"></div>
+      <div class="sc-cloud c1"></div>
+      <div class="sc-cloud c2"></div>
+      <div class="sc-cloud c3"></div>
+      <div class="sc-bird b1"></div>
+      <div class="sc-city"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="sc-hill h1"></div>
+      <div class="sc-hill h2"></div>
+      <div class="sc-tree t1"></div>
+      <div class="sc-tree t2"></div>
+      <div class="sc-road"></div>
+      <div class="sc-kerb"></div>
+    </div>
+    <div class="stage-body" id="lg-body"></div>
+  </div>
+</div>
+
+<!-- ===== قائمة الأرقام ===== -->
+<div id="scr-numbers" class="screen list-screen">
+  <div class="scr-head">
+    <button class="back-btn" onclick="BB.goHome()">🏠</button>
+    <h2>أرقامنا</h2>
+    <span class="stars-count" id="stars-numbers">⭐ 0</span>
+  </div>
+  <div class="numbers-grid" id="numbers-grid"></div>
+</div>
+
+<!-- ===== لعبة الرقم ===== -->
+<div id="scr-number-game" class="screen">
+  <div class="scr-head dark">
+    <button class="back-btn" onclick="BB.goHome()">🏠</button>
+    <div class="game-title" id="ng-title">رقم</div>
+    <span class="stars-count" id="stars-ng">⭐</span>
+  </div>
+  <div id="ng-stage" class="lg-stage">
+    <div class="scene" aria-hidden="true">
+      <div class="sc-sky"></div>
+      <div class="sc-rays"></div>
+      <div class="sc-sun"></div>
+      <div class="sc-cloud c1"></div>
+      <div class="sc-cloud c3"></div>
+      <div class="sc-city"><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="sc-hill h1"></div>
+      <div class="sc-hill h2"></div>
+      <div class="sc-tree t1"></div>
+      <div class="sc-road"></div>
+      <div class="sc-kerb"></div>
+    </div>
+    <div class="stage-body" id="ng-body"></div>
+  </div>
+</div>
+
+<!-- ===== شاشة الأهل ===== -->
+<div id="scr-parent" class="screen list-screen">
+  <div class="scr-head">
+    <button class="back-btn" onclick="BB.goHome()">🏠</button>
+    <h2>للأهل</h2>
+    <span></span>
+  </div>
+  <div id="parent-gate" class="parent-box">
+    <p class="parent-q">لفتح الإعدادات…<br>كم يُساوي <b id="pg-q">٧ + ٥</b> ؟</p>
+    <input type="number" id="pg-answer" inputmode="numeric" autocomplete="off">
+    <button class="parent-btn" onclick="BB.checkGate()">فتح</button>
+  </div>
+  <div id="parent-panel" class="parent-box hidden">
+    <div class="parent-info">
+      <p><b>بيب بيب</b> — ورشة الحروف والأرقام</p>
+      <p>الإصدار: <span id="app-version">1.2.0</span></p>
+      <p>محتوى التطبيق: <span id="pack-version">1</span></p>
+    </div>
+    <button class="parent-btn" id="check-update-btn" onclick="BB.manualUpdate()">🔍 فحص التحديث</button>
+    <button class="parent-btn danger" onclick="BB.resetProgress()">🗑️ تصفير التقدّم</button>
+    <p class="parent-hint">يتحقق التطبيق من التحديث تلقائيًا عند كل تشغيل إذا كان الإنترنت متوفرًا، وتُنزَّل حزمة المحتوى الجديدة من داخل التطبيق دون الحاجة إلى تثبيته من جديد.</p>
+    <div class="copyright">All Rights Reserved - Nexus Solutions LTD</div>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+<script src="pack-default.js"></script>
+<script src="vehicles.js"></script>
+<script src="voice-map.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
