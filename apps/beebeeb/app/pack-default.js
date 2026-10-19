@@ -1,7 +1,7 @@
 /* حزمة المحتوى الافتراضية — بيب بيب v1 */
 /* كل الكلمات مختارة من مفردات يعرفها طفل عمر 3 سنين، والعربيات تعزّز فكرة الورشة */
 window.DEFAULT_PACK = {
-  v: 1,
+  v: 2,
   letters: [
     { c: "أ",  n: "أَلِف",  w: "أَرنَب",    wCar: false, e: "🐰" },
     { c: "ب",  n: "باء",    w: "بَطَّة",    wCar: true,  e: "🦆" },
@@ -44,6 +44,63 @@ window.DEFAULT_PACK = {
     { v: 9,  w: "تِسْعَة",  ic: "🛻" },
     { v: 10, w: "عَشَرَة",   ic: "🚛" }
   ],
+  /* الحروف الإنجليزية: say = النطق اللفظي لاسم الحرف (متصرف مع المحرك بضمان نطق صحيح) */
+  lettersEn: [
+    { c:"A", say:"Aye",      w:"Apple",     e:"🍎" },
+    { c:"B", say:"Bee",      w:"Ball",      e:"⚽" },
+    { c:"C", say:"Sea",      w:"Cat",       e:"🐱" },
+    { c:"D", say:"Dee",      w:"Dog",       e:"🐶" },
+    { c:"E", say:"Ee",       w:"Elephant",  e:"🐘" },
+    { c:"F", say:"Eff",      w:"Fish",      e:"🐟" },
+    { c:"G", say:"Jee",      w:"Goat",      e:"🐐" },
+    { c:"H", say:"Aitch",    w:"Hat",       e:"🎩" },
+    { c:"I", say:"Eye",      w:"Ice cream", e:"🍦" },
+    { c:"J", say:"Jay",      w:"Juice",     e:"🧃" },
+    { c:"K", say:"Kay",      w:"Kite",      e:"🪁" },
+    { c:"L", say:"Ell",      w:"Lion",      e:"🦁" },
+    { c:"M", say:"Em",       w:"Monkey",    e:"🐵" },
+    { c:"N", say:"En",       w:"Nose",      e:"👃" },
+    { c:"O", say:"Oh",       w:"Orange",    e:"🍊" },
+    { c:"P", say:"Pee",      w:"Parrot",    e:"🦜" },
+    { c:"Q", say:"Cue",      w:"Queen",     e:"👑" },
+    { c:"R", say:"Are",      w:"Rabbit",    e:"🐰" },
+    { c:"S", say:"Ess",      w:"Sun",       e:"☀️" },
+    { c:"T", say:"Tee",      w:"Tree",      e:"🌳" },
+    { c:"U", say:"You",      w:"Umbrella",  e:"☂️" },
+    { c:"V", say:"Vee",      w:"Van",       e:"🚐" },
+    { c:"W", say:"Double U", w:"Water",     e:"💧" },
+    { c:"X", say:"Ex",       w:"Xylophone", e:"🎵" },
+    { c:"Y", say:"Why",      w:"Yo-yo",     e:"🪀" },
+    { c:"Z", say:"Zee",      w:"Zebra",     e:"🦓" }
+  ],
+  /* الأرقام الإنجليزية */
+  numbersEn: [
+    { v: 1,  w: "One",   ic: "🚗" },
+    { v: 2,  w: "Two",   ic: "🚙" },
+    { v: 3,  w: "Three", ic: "🚕" },
+    { v: 4,  w: "Four",  ic: "🚚" },
+    { v: 5,  w: "Five",  ic: "🚌" },
+    { v: 6,  w: "Six",   ic: "🚒" },
+    { v: 7,  w: "Seven", ic: "🚑" },
+    { v: 8,  w: "Eight", ic: "🏎️" },
+    { v: 9,  w: "Nine",  ic: "🛻" },
+    { v: 10, w: "Ten",   ic: "🚛" }
+  ],
+  /* عبارات الواجهة بالإنجليزية (تُستخدم عندما يفتح الطفل قسم ABC أو 123) */
+  phrasesEn: {
+    openLetters: "Let's play letters!",
+    openNumbers: "Let's play numbers!",
+    tapCar: "Tap the car!",
+    meetIntro: "This letter is called",
+    catchTitle: "Tap the car with the letter",
+    catchWrong: "Not this one! Look again!",
+    catchDone: "Great job! You learned the letter",
+    loadTitle: "Load the truck",
+    loadHow: "Tap the cars and count with me",
+    counting: "",
+    done: "Great job! Awesome",
+    teach: "Say with me"
+  },
   phrases: {
     home: "أهلاً بك في ورشة بيب بيب! هيا نلعب",
     openLetters: "هيّا نلعب الحروف!",

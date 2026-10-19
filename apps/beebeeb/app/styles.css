@@ -192,12 +192,24 @@ button { font-family:inherit; border:none; cursor:pointer; background:none; }
 .big-card:active { transform:scale(.95) translateY(4px); }
 .letters-card { border:4px solid #FF6FA5; }
 .numbers-card { border:4px solid #57C84D; }
+/* بطاقات القسم الإنجليزي (ABC / 123) */
+.letters-en-card { border:4px solid #4FA8FF; }
+.numbers-en-card { border:4px solid #A678F0; }
+.en-flag {
+  position:absolute; top:10px; inset-inline-start:12px;
+  font-size:.7rem; font-weight:900; color:#FFFFFF; letter-spacing:.5px;
+  background:linear-gradient(135deg,#4FA8FF,#A678F0);
+  padding:3px 10px; border-radius:12px; box-shadow:0 3px 6px rgba(30,80,160,.25);
+}
 .big-ic {
   font-size:2.5rem; font-weight:900; letter-spacing:1px; line-height:1.2;
   padding:6px 16px; border-radius:18px;
 }
 .letters-card .big-ic { color:#D81B60; background:#FFE3EF; }
 .numbers-card .big-ic { color:#2E7D32; background:#E3F9E0; }
+.letters-en-card .big-ic { color:#1565C0; background:#E1F1FF; }
+.numbers-en-card .big-ic { color:#7B1FA2; background:#F1E7FF; }
+.letters-en-card .big-tt, .numbers-en-card .big-tt { color:#1565C0; }
 .big-tt { font-size:1.5rem; font-weight:900; color:#0B6FA8; }
 .big-sub { font-size:.88rem; font-weight:900; color:#7A99AC; }
 

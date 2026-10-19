@@ -3,13 +3,15 @@
 window.BB = (function () {
   "use strict";
 
-  var APK_VERSION = "1.2.0";
+  var APK_VERSION = "1.3.0";
   var MANIFEST_URL = "https://nexsolutions.pages.dev/apps/beebeeb/manifest.json";
   var LS = { pack: "bb_pack_v", stars: "bb_stars", startCount: "bb_starts" };
 
-  var PACK = (window.DEFAULT_PACK && window.DEFAULT_PACK.v) ? window.DEFAULT_PACK : { v: 1, letters: [], numbers: [], phrases: {} };
-  var stars = { L: {}, N: {} };
+  var PACK = (window.DEFAULT_PACK && window.DEFAULT_PACK.v) ? window.DEFAULT_PACK : { v: 2, letters: [], lettersEn: [], numbers: [], numbersEn: [], phrases: {}, phrasesEn: {} };
+  var stars = { L: {}, N: {}, E: {}, M: {} };
   var currentLetter = null, currentNumber = null;
+  /* لغة القسم الحالي المفتوح: "ar" للحروف/الأرقام العربية، "en" للأقسام الإنجليزية */
+  var curLang = "ar";
   var curScreen = "scr-home";
   var gateQ = null, gateTarget = 0;
   var ac = null;
@@ -21,6 +23,22 @@ window.BB = (function () {
   function rand(n) { return Math.floor(Math.random() * n); }
   function pick(arr) { return arr[rand(arr.length)]; }
   function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = rand(i + 1), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+
+  /* ---------- أدوات اللغة (عربي / English) ---------- */
+  var AR_DIG = ["", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩", "١٠"];
+  function letArr() { return (curLang === "en" && PACK.lettersEn && PACK.lettersEn.length) ? PACK.lettersEn : PACK.letters; }
+  function numArr() { return (curLang === "en" && PACK.numbersEn && PACK.numbersEn.length) ? PACK.numbersEn : PACK.numbers; }
+  function teamL() { return curLang === "en" ? "E" : "L"; }
+  function teamN() { return curLang === "en" ? "M" : "N"; }
+  function digFor(v) { return curLang === "en" ? String(v) : (AR_DIG[v] || String(v)); }
+  /* نص عبارة واجهة حسب اللغة الحالية */
+  function PH(key) {
+    if (curLang === "en" && PACK.phrasesEn && PACK.phrasesEn[key]) return PACK.phrasesEn[key];
+    return (PACK.phrases && PACK.phrases[key]) || "";
+  }
+  /* الاسم المنطوق للحرف: عربي كامل أو اللفظ الإنجليزي (Aye/Bee/…) */
+  function letterName(L) { return curLang === "en" ? (L.say || L.c) : L.n; }
+  function digitsOnly(s) { return String(s).replace(/[0-9]/g, function (d) { return AR_DIG[+d]; }); }
 
   /* ---------- ألوان ---------- */
   /* [اللون الأساسي، اللون الغامق] — يُستخدمان في التدرّجات */
@@ -81,7 +99,8 @@ window.BB = (function () {
     if (window.speechSynthesis) {
       try {
         var u = new SpeechSynthesisUtterance(text);
-        u.lang = "ar"; u.rate = slow ? 0.75 : 0.9; u.pitch = 1.1;
+        u.lang = /^[\u0600-\u06FF]/.test(text) ? "ar-EG" : "en-US";
+        u.rate = slow ? 0.75 : 0.9; u.pitch = 1.1;
         window.speechSynthesis.speak(u);
       } catch (e) {}
     }
@@ -125,7 +144,11 @@ window.BB = (function () {
 
   /* ---------- stars / progress ---------- */
   function loadStars() {
-    try { var s = JSON.parse(localStorage.getItem(LS.stars) || "{}"); if (s && s.L) stars = s; } catch (e) {}
+    try {
+      var s = JSON.parse(localStorage.getItem(LS.stars) || "{}");
+      if (s && typeof s === "object") stars = s;
+    } catch (e) {}
+    ["L", "N", "E", "M"].forEach(function (k) { if (!stars[k]) stars[k] = {}; });
   }
   function saveStars() { localStorage.setItem(LS.stars, JSON.stringify(stars)); }
   function addStar(team, id) {
@@ -170,10 +193,18 @@ window.BB = (function () {
   }
   function refreshHome() {
     buildHomeScene();
-    var totalL = PACK.letters.length, doneL = Object.keys(stars.L).length;
-    var totalN = PACK.numbers.length, doneN = Object.keys(stars.N).length;
-    $("letters-progress").textContent = doneL >= totalL ? "أكملتها كلها! 🏆" : (doneL > 0 ? ("أنجزت " + doneL + " من " + totalL) : "هيا نلعب!");
-    $("numbers-progress").textContent = doneN >= totalN ? "أكملتها كلها! 🏆" : (doneN > 0 ? ("أنجزت " + doneN + " من " + totalN) : "هيا نلعب!");
+    function prog(el, team, arr) {
+      var done = 0;
+      for (var k in stars[team]) { if (stars[team][k]) done++; }
+      var total = arr.length;
+      var e = $(el);
+      if (!e) return;
+      e.textContent = done >= total ? "أكملتها كلها! 🏆" : (done > 0 ? ("أنجزت " + done + " من " + total) : "هيا نلعب!");
+    }
+    prog("letters-progress", "L", PACK.letters);
+    prog("numbers-progress", "N", PACK.numbers);
+    prog("enletters-progress", "E", PACK.lettersEn || []);
+    prog("enumbers-progress", "M", PACK.numbersEn || []);
     say(PACK.phrases.home || "");
   }
 
@@ -184,17 +215,27 @@ window.BB = (function () {
     clearTimeout(t._h); t._h = setTimeout(function () { t.classList.add("hidden"); }, ms || 3200);
   }
   function applyPack(json) {
-    if (!json || !json.v || !json.letters) return false;
+    if (!json || !json.v || !(json.letters && json.letters.length)) return false;
     PACK = json;
+    ["L", "N", "E", "M"].forEach(function (k) { if (!stars[k]) stars[k] = {}; });
     localStorage.setItem(LS.pack, JSON.stringify(json));
     return true;
   }
   function loadLocalPack() {
     try {
       var raw = localStorage.getItem(LS.pack);
-      if (raw) { var p = JSON.parse(raw); if (p && p.letters && p.numbers) PACK = p; }
+      if (raw) {
+        var p = JSON.parse(raw);
+        /* الحزمة المحفوظة تُقبل فقط إن كانت بنفس إصدار الحزمة المدمجة أو أحدث — قديمة تُتجاهل */
+        if (p && p.v === PACK.v && p.letters && p.numbers) PACK = p;
+      }
     } catch (e) {}
     $("pack-version").textContent = PACK.v;
+  }
+  function versionGT(a, b) {
+    var A = String(a || "").split(".").map(Number), B = String(b || "").split(".").map(Number);
+    for (var i = 0; i < 3; i++) { var x = A[i] || 0, y = B[i] || 0; if (x > y) return true; if (x < y) return false; }
+    return false;
   }
   function checkUpdate(manual) {
     if (!navigator.onLine && !manual) return;
@@ -202,10 +243,10 @@ window.BB = (function () {
       .then(function (r) { if (!r.ok) throw 0; return r.json(); })
       .then(function (m) {
         if (m && m.v > PACK.v) return fetchPackManifest(m);
-        if (m && m.apkVersion && m.apkVersion > APK_VERSION) {
+        if (m && m.apkVersion && versionGT(m.apkVersion, APK_VERSION)) {
           window.latestApkUrl = m.apkUrl || null;
           ensureApkUpdateBtn(m.apkVersion);
-          if (manual) toast("يتوفر إصدار أحدث من التطبيق — حمّله من شاشة الأهل 🔽");
+          if (manual) toast("يتوفر إصدار أحدث من التطبيق (v" + m.apkVersion + ") — حمّله من شاشة الأهل 🔽");
         } else if (manual) toast("التطبيق محدَّث بالفعل ✅");
       })
       .catch(function () { if (manual) toast("تعذّر الاتصال بالسيرفر… تحقق من الإنترنت وحاول مرة أخرى"); });
@@ -222,6 +263,11 @@ window.BB = (function () {
           buildLetters(); buildNumbers(); refreshStarsEls();
           say("تم تحديث التطبيق! محتوى جديد");
           $("pack-version").textContent = PACK.v;
+          /* بعد تحديث المحتوى: إن كان يؤجل الإصدار جديدًا فأظهر زر التحميل في نفس اللحظة */
+          if (m && m.apkVersion && versionGT(m.apkVersion, APK_VERSION)) {
+            window.latestApkUrl = m.apkUrl || null;
+            ensureApkUpdateBtn(m.apkVersion);
+          }
         }
       })
       .catch(function () { toast("تعذّر تنزيل التحديث… تحقق من الإنترنت وحاول مرة أخرى"); });
@@ -251,22 +297,26 @@ window.BB = (function () {
   }
 
   /* ---------- LETTERS SCREEN ---------- */
-  function openLetters() {
+  function openLetters(lang) {
+    curLang = (lang === "en") ? "en" : "ar";
     buildLetters();
+    $("letters-title").textContent = curLang === "en" ? "ABC Letters" : "حروفنا";
+    $("stars-letters").textContent = "⭐ " + totals(teamL());
     show("scr-letters");
-    say(PACK.phrases.openLetters || "");
+    say(PH("openLetters") || PH("openLettersFallback"));
   }
   function buildLetters() {
+    var arr = letArr(), team = teamL();
     var g = $("letters-grid"); g.innerHTML = "";
-    PACK.letters.forEach(function (L, i) {
+    arr.forEach(function (L, i) {
       var b = document.createElement("button");
-      b.className = "letter-card" + (stars.L[i] ? " done" : "");
+      b.className = "letter-card" + (stars[team][i] ? " done" : "");
       b.style.setProperty("--c", palette(i));
       b.style.setProperty("--c2", palette2(i));
       b.innerHTML =
         '<span class="lc-head">' + roadVeh(i, "xs") + '<span class="lc-l">' + esc(L.c) + "</span></span>" +
         '<span class="lc-w">' + esc(L.w) + "</span>" +
-        '<span class="lc-s">' + starStr("L", i) + "</span>";
+        '<span class="lc-s">' + starStr(team, i) + "</span>";
       b.onclick = function () { startLetterGame(i); };
       g.appendChild(b);
     });
@@ -279,10 +329,13 @@ window.BB = (function () {
 
   /* ---------- LETTER GAME ---------- */
   function startLetterGame(i) {
-    currentLetter = { idx: i, L: PACK.letters[i] };
-    var n = stars.L[i] || 0;
-    $("lg-title").textContent = "حرف " + currentLetter.L.c + " — " + currentLetter.L.n;
-    $("stars-lg").textContent = "⭐".repeat(n + 1);
+    var arr = letArr();
+    currentLetter = { idx: i, L: arr[i], team: teamL() };
+    var L = currentLetter.L, n = (stars[currentLetter.team][i] || 0);
+    $("lg-title").textContent = curLang === "en"
+      ? ("Letter " + L.c + " — " + L.w)
+      : ("حرف " + L.c + " — " + L.n);
+    $("stars-lg").textContent = "⭐".repeat(Math.min(5, n + 1));
     show("scr-letter-game");
     buildLetterGame();
   }
@@ -293,20 +346,20 @@ window.BB = (function () {
     var L = currentLetter.L, idx = currentLetter.idx, col = palette(idx);
     stageHTML(
       '<div class="center-wrap">' +
-        '<span class="stage-prompt">' + esc(PACK.phrases.tapCar) + "</span>" +
+        '<span class="stage-prompt">' + esc(PH("tapCar")) + "</span>" +
         '<button class="hero-car-btn" id="lg-car">' +
           '<span class="car-holder">' +
             roadVeh(idx, "xl bob") +
             '<span class="roof-plate" style="--c:' + col + '">' + esc(L.c) + "</span>" +
           "</span>" +
         "</button>" +
-        '<button class="next-btn" id="lg-next">التالي ▶️</button>' +
+        '<button class="next-btn" id="lg-next">' + (curLang === "en" ? "Next ▶️" : "التالي ▶️") + "</button>" +
       "</div>"
     );
     var car = $("lg-car");
     car.onclick = function () {
       honk();
-      speakSeq([L.n, L.w], true);
+      speakSeq([letterName(L), L.w], true);
       var chip = document.querySelector("#lg-body .word-chip");
       if (!chip) {
         chip = document.createElement("div");
@@ -317,19 +370,20 @@ window.BB = (function () {
         car.parentNode.appendChild(chip);
       }
       setTimeout(function () { $("lg-next").classList.add("show"); }, 700);
-      car.onclick = function () { honk(); say(L.n + "! " + L.w + "!", true); };
+      car.onclick = function () { honk(); speakSeq([letterName(L), L.w], true); };
     };
     $("lg-next").onclick = buildLetterCatch;
-    say(PACK.phrases.tapCar);
+    say(PH("tapCar"));
   }
 
   /* المرحلة 2 : تجميع الحرف من العربيات المارة (من اليمين إلى اليسار) */
   function buildLetterCatch() {
     var L = currentLetter.L, target = L.c, col = palette(currentLetter.idx);
+    var catchName = curLang === "en" ? ("Letter " + L.c) : ("حرف " + L.n);
     stageHTML('<div class="center-wrap" style="justify-content:flex-start">' +
-      '<span class="stage-prompt">' + esc(PACK.phrases.catchTitle) + "</span>" +
+      '<span class="stage-prompt">' + esc(PH("catchTitle")) + "</span>" +
       '<div class="letter-plate" style="--c:' + col + '">' + esc(target) + "</div>" +
-      '<div class="catch-name">حرف ' + esc(L.n) + "</div>" +
+      '<div class="catch-name">' + esc(catchName) + "</div>" +
       "</div>");
     var caught = 0, spawned = 0, TOTAL = 6, NEEDED = 3;
     var timers = [];
@@ -337,7 +391,7 @@ window.BB = (function () {
       if (spawned >= TOTAL) return;
       spawned++;
       var isTarget = caught < NEEDED && (spawned <= TOTAL - 2 ? Math.random() < 0.55 : true);
-      var obs = isTarget ? target : pick(shuffle(PACK.letters.filter(function (x) { return x.c !== target; }))).c;
+      var obs = isTarget ? target : pick(shuffle(letArr().filter(function (x) { return x.c !== target; }))).c;
       var car = document.createElement("button");
       car.className = "traffic-car";
       var dur = 4200 + rand(1800);
@@ -354,71 +408,78 @@ window.BB = (function () {
           caught++;
           car.classList.add("car-fly");
           popSound(); goodSound();
-          say(L.n, true);
-          $("stars-lg").textContent = "⭐".repeat(Math.min(5, (stars.L[currentLetter.idx] || 0) + 1)) + " " + caught + "/" + NEEDED;
+          say(letterName(L), true);
+          var n = (stars[currentLetter.team][currentLetter.idx] || 0) + 1;
+          $("stars-lg").textContent = "⭐".repeat(Math.min(5, n)) + " " + caught + "/" + NEEDED;
           timers.push(setTimeout(function () { car.remove(); }, 760));
           if (caught >= NEEDED) { timers.forEach(clearTimeout); setTimeout(letterWin, 700); }
         } else {
           car.classList.add("car-shake");
           honk();
           timers.push(setTimeout(function () { car.classList.add("car-leave"); }, 420));
-          say(PACK.phrases.catchWrong);
+          say(PH("catchWrong"));
         }
       };
       timers.push(setTimeout(function () { done = true; car.remove(); }, dur + 400));
       timers.push(setTimeout(spawn, 900 + rand(1400)));
     }
     spawn(); setTimeout(spawn, 1400);
-    speakSeq([PACK.phrases.catchTitle, L.n], true);
+    speakSeq([PH("catchTitle"), letterName(L)], true);
   }
 
   function letterWin() {
-    addStar("L", currentLetter.idx);
+    addStar(currentLetter.team, currentLetter.idx);
     starSound();
     var L = currentLetter.L;
     stageHTML(
       '<div class="win-wrap">' +
         '<div class="win-plate" style="--c:' + palette(currentLetter.idx) + '">' + esc(L.c) + "</div>" +
         '<div class="big-star">⭐</div>' +
-        '<div class="win-tt">' + esc(L.n + " — " + L.w) + "</div>" +
+        '<div class="win-tt">' + esc(letterName(L) + " — " + L.w) + "</div>" +
         '<div class="win-btns">' +
-          '<button class="round-btn" onclick="BB.replayLetter()">🔁 مرة أخرى</button>' +
-          '<button class="round-btn alt" onclick="BB.nextLetter()">الحرف التالي ▶️</button>' +
+          '<button class="round-btn" onclick="BB.replayLetter()">' + (curLang === "en" ? "🔁 Again" : "🔁 مرة أخرى") + "</button>" +
+          '<button class="round-btn alt" onclick="BB.nextLetter()">' + (curLang === "en" ? "Next letter ▶️" : "الحرف التالي ▶️") + "</button>" +
         "</div>" +
       "</div>");
     confetti();
-    speakSeq([PACK.phrases.done, L.n, L.w]);
+    speakSeq([PH("done"), letterName(L), L.w]);
     buildLetters();
   }
   function replayLetter() { startLetterGame(currentLetter.idx); }
-  function nextLetter() { startLetterGame((currentLetter.idx + 1) % PACK.letters.length); }
+  function nextLetter() { startLetterGame((currentLetter.idx + 1) % letArr().length); }
 
   /* ---------- NUMBERS ---------- */
-  function openNumbers() {
+  function openNumbers(lang) {
+    curLang = (lang === "en") ? "en" : "ar";
     buildNumbers();
+    $("numbers-title").textContent = curLang === "en" ? "123 Numbers" : "أرقامنا";
+    $("stars-numbers").textContent = "⭐ " + totals(teamN());
     show("scr-numbers");
-    say(PACK.phrases.openNumbers || "");
+    say(PH("openNumbers") || "");
   }
   function buildNumbers() {
+    var arr = numArr(), team = teamN();
     var g = $("numbers-grid"); g.innerHTML = "";
-    PACK.numbers.forEach(function (N, i) {
+    arr.forEach(function (N, i) {
       var b = document.createElement("button");
-      b.className = "number-card" + (stars.N[i] ? " done" : "");
-      var nbArabic = ["", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩", "١٠"][N.v];
+      b.className = "number-card" + (stars[team][i] ? " done" : "");
       b.style.setProperty("--c", numColor(i));
       b.style.setProperty("--c2", numColor2(i));
-      b.innerHTML = '<span class="nc-body">' + roadVeh(i) + '<span class="nc-n">' + nbArabic + "</span></span>" +
-        '<span class="nc-s">' + starStr("N", i) + "</span>";
+      b.innerHTML = '<span class="nc-body">' + roadVeh(i) + '<span class="nc-n">' + digFor(N.v) + "</span></span>" +
+        '<span class="nc-s">' + starStr(team, i) + "</span>";
       b.onclick = function () { startNumberGame(i); };
       g.appendChild(b);
     });
     refreshStarsEls();
   }
   function startNumberGame(i) {
-    currentNumber = { idx: i, N: PACK.numbers[i] };
-    var n = stars.N[i] || 0;
-    $("ng-title").textContent = "رقم " + ["", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩", "١٠"][currentNumber.N.v];
-    $("stars-ng").textContent = "⭐".repeat(n + 1);
+    var arr = numArr();
+    currentNumber = { idx: i, N: arr[i], team: teamN() };
+    var n = (stars[currentNumber.team][i] || 0);
+    $("ng-title").textContent = curLang === "en"
+      ? ("Number " + currentNumber.N.v)
+      : ("رقم " + digFor(currentNumber.N.v));
+    $("stars-ng").textContent = "⭐".repeat(Math.min(5, n + 1));
     show("scr-number-game");
     buildNumberGame();
   }
@@ -429,7 +490,7 @@ window.BB = (function () {
     for (var k = 0; k < N.v; k++) slots += '<span class="slot" data-slot="' + k + '"></span>';
     stageHTML(
       '<div class="truck-zone">' +
-        '<span class="stage-prompt">' + esc(PACK.phrases.loadTitle + " — " + N.w) + "</span>" +
+        '<span class="stage-prompt">' + esc(PH("loadTitle") + " — " + N.w) + "</span>" +
         '<div class="truck-wrap" id="ng-truck">' +
           '<span class="truck-badge" id="ng-count">0 / ' + N.v + "</span>" +
           veh("carrier", "xl") +
@@ -450,7 +511,7 @@ window.BB = (function () {
           if (s.classList.contains("loaded")) return;
           loaded++;
           s.classList.add("loaded"); popSound();
-          say(PACK.numbers[loaded - 1].w, true);
+          say(numArr()[loaded - 1].w, true);
           var mini = document.createElement("span");
           mini.className = "veh";
           mini.innerHTML = vehSvg(s.getAttribute("data-veh"));
@@ -459,16 +520,16 @@ window.BB = (function () {
           badge.textContent = loaded + " / " + N.v;
           badge.classList.remove("pop"); void badge.offsetWidth; badge.classList.add("pop");
           var slot = document.querySelector('#ng-slots .slot[data-slot="' + (loaded - 1) + '"]');
-          if (slot) { slot.classList.add("filled"); slot.textContent = ["", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩", "١٠"][loaded]; }
+          if (slot) { slot.classList.add("filled"); slot.textContent = digFor(loaded); }
           if (loaded >= N.v) setTimeout(numberWin, 850);
         };
         pool.appendChild(s);
       })(i);
     }
-    speakSeq([PACK.phrases.loadTitle, N.w], true);
+    speakSeq([PH("loadTitle"), N.w], true);
   }
   function numberWin() {
-    addStar("N", currentNumber.idx);
+    addStar(currentNumber.team, currentNumber.idx);
     starSound();
     var N = currentNumber.N;
     var tr = $("ng-truck");
@@ -476,21 +537,21 @@ window.BB = (function () {
     setTimeout(function () {
       stageHTML(
         '<div class="win-wrap">' +
-          '<div class="win-plate" style="--c:' + numColor(currentNumber.idx) + '">' + ["", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩", "١٠"][N.v] + "</div>" +
+          '<div class="win-plate" style="--c:' + numColor(currentNumber.idx) + '">' + digFor(N.v) + "</div>" +
           '<div class="big-star">⭐</div>' +
-          '<div class="win-tt">' + esc(N.v + " — " + N.w) + "</div>" +
+          '<div class="win-tt">' + esc(digFor(N.v) + " — " + N.w) + "</div>" +
           '<div class="win-btns">' +
-            '<button class="round-btn" onclick="BB.replayNumber()">🔁 مرة أخرى</button>' +
-            '<button class="round-btn alt" onclick="BB.nextNumber()">الرقم التالي ▶️</button>' +
+            '<button class="round-btn" onclick="BB.replayNumber()">' + (curLang === "en" ? "🔁 Again" : "🔁 مرة أخرى") + "</button>" +
+            '<button class="round-btn alt" onclick="BB.nextNumber()">' + (curLang === "en" ? "Next number ▶️" : "الرقم التالي ▶️") + "</button>" +
           "</div>" +
         "</div>", "ng-body");
       confetti();
-      speakSeq([PACK.phrases.done, N.w]);
+      speakSeq([PH("done"), N.w]);
       buildNumbers();
     }, 1700);
   }
   function replayNumber() { startNumberGame(currentNumber.idx); }
-  function nextNumber() { startNumberGame((currentNumber.idx + 1) % PACK.numbers.length); }
+  function nextNumber() { startNumberGame((currentNumber.idx + 1) % numArr().length); }
 
   /* ---------- confetti ---------- */
   function confetti() {
@@ -533,9 +594,10 @@ window.BB = (function () {
   }
   function resetProgress() {
     if (confirm("هل تريد بالتأكيد مسح كل النجوم وتقدّم اللعب؟")) {
-      stars = { L: {}, N: {} };
+      stars = { L: {}, N: {}, E: {}, M: {} };
       saveStars();
       buildLetters(); buildNumbers(); refreshStarsEls();
+      refreshHome();
       toast("تم تصفير التقدّم ✅");
     }
   }

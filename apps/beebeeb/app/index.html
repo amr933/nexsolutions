@@ -49,15 +49,25 @@
     </div>
 
     <div class="home-cards">
-      <button class="big-card letters-card" onclick="BB.openLetters()">
+      <button class="big-card letters-card" onclick="BB.openLetters('ar')">
         <span class="big-ic">أ ب ت</span>
         <span class="big-tt">الحروف</span>
         <span class="big-sub" id="letters-progress">هيا نلعب!</span>
       </button>
-      <button class="big-card numbers-card" onclick="BB.openNumbers()">
+      <button class="big-card numbers-card" onclick="BB.openNumbers('ar')">
         <span class="big-ic">١٢٣</span>
         <span class="big-tt">الأرقام</span>
         <span class="big-sub" id="numbers-progress">هيا نلعب!</span>
+      </button>
+      <button class="big-card letters-en-card" onclick="BB.openLetters('en')">
+        <span class="en-flag">ENGLISH</span>
+        <span class="big-ic">A B C</span>
+        <span class="big-sub" id="enletters-progress">Let's play!</span>
+      </button>
+      <button class="big-card numbers-en-card" onclick="BB.openNumbers('en')">
+        <span class="en-flag">ENGLISH</span>
+        <span class="big-ic">1 2 3</span>
+        <span class="big-sub" id="enumbers-progress">Let's play!</span>
       </button>
     </div>
 
@@ -76,7 +86,7 @@
 <div id="scr-letters" class="screen list-screen">
   <div class="scr-head">
     <button class="back-btn" onclick="BB.goHome()">🏠</button>
-    <h2>حروفنا</h2>
+    <h2 id="letters-title">حروفنا</h2>
     <span class="stars-count" id="stars-letters">⭐ 0</span>
   </div>
   <div class="letters-grid" id="letters-grid"></div>
@@ -114,7 +124,7 @@
 <div id="scr-numbers" class="screen list-screen">
   <div class="scr-head">
     <button class="back-btn" onclick="BB.goHome()">🏠</button>
-    <h2>أرقامنا</h2>
+    <h2 id="numbers-title">أرقامنا</h2>
     <span class="stars-count" id="stars-numbers">⭐ 0</span>
   </div>
   <div class="numbers-grid" id="numbers-grid"></div>

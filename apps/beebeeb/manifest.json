@@ -1,7 +1,7 @@
 {
-  "v": 1,
-  "packUrl": "https://nexsolutions.pages.dev/apps/beebeeb/pack-v1.json",
+  "v": 2,
+  "packUrl": "https://nexsolutions.pages.dev/apps/beebeeb/pack-v2.json",
   "apkV": 1,
-  "apkVersion": "1.2.0",
-  "apkUrl": "https://nexsolutions.pages.dev/apps/beebeeb/BeebBeeb-1.2.0.apk"
+  "apkVersion": "1.3.0",
+  "apkUrl": "https://nexsolutions.pages.dev/apps/beebeeb/BeebBeeb-1.3.0.apk"
 }
