@@ -195,6 +195,45 @@ p{color:var(--ink-soft)}
 .product-card .btn.small{box-shadow:none}
 .product-card .btn.small:not(.wa-link){background:var(--accent);color:#fff}
 
+/* ---------- حلولنا التقنية ---------- */
+.sol-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.sol-card{
+  background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+  padding:24px;box-shadow:var(--shadow-sm);transition:.2s transform,.2s box-shadow;
+}
+.sol-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.s-icon{
+  display:grid;place-items:center;width:54px;height:54px;margin-bottom:14px;
+  border-radius:16px;font-size:1.55rem;
+  background:linear-gradient(135deg,var(--brand-soft),#f2f8ff);
+  border:1px solid #dbe7f8;
+}
+.sol-card h3{font-size:1.06rem;margin-bottom:8px}
+.sol-card p{font-size:.93rem}
+
+/* ---------- وسم القسم داخل الشركة ---------- */
+.family-tag{
+  display:inline-block;font-weight:900;font-size:.82rem;
+  color:var(--brand);background:var(--brand-soft);
+  border:1px solid #d3e2fb;border-radius:999px;padding:6px 16px;margin-bottom:14px;
+}
+.family-tag.alt{color:var(--beeb);background:var(--beeb-soft);border-color:#f6e0bd}
+.section-note{
+  margin-top:16px;background:#fff;border:1px dashed #c9dbef;border-radius:var(--radius-sm);
+  padding:13px 18px;font-size:.92rem;font-weight:700;color:var(--ink-soft);
+}
+
+/* ---------- قسم التطبيقات ---------- */
+.apps-grid{display:grid;grid-template-columns:1.35fr .9fr;gap:24px;align-items:start}
+.cta-card{
+  background:linear-gradient(140deg,#0f2e6e,#1d4ed8 60%,#0ea5e9);
+  color:#fff;border-radius:var(--radius);padding:30px;box-shadow:var(--shadow);
+}
+.cta-card .c-icon{font-size:2rem}
+.cta-card h3{color:#fff;margin:10px 0 10px;font-size:1.24rem}
+.cta-card p{color:#dbe8ff;font-size:.94rem;margin-bottom:20px}
+.cta-card .btn{width:100%}
+
 /* ---------- قيد التطوير ---------- */
 .roadmap-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
 .road-card{
@@ -281,6 +320,8 @@ p{color:var(--ink-soft)}
   .products-grid{grid-template-columns:1fr}
   .roadmap-grid{grid-template-columns:repeat(2,1fr)}
   .why-grid{grid-template-columns:repeat(2,1fr)}
+  .sol-grid{grid-template-columns:repeat(2,1fr)}
+  .apps-grid{grid-template-columns:1fr}
   .about-grid{grid-template-columns:1fr}
 }
 @media (max-width:820px){
@@ -299,7 +340,7 @@ p{color:var(--ink-soft)}
 @media (max-width:560px){
   body{font-size:16px}
   .stats{grid-template-columns:repeat(2,1fr)}
-  .roadmap-grid,.why-grid{grid-template-columns:1fr}
+  .roadmap-grid,.why-grid,.sol-grid{grid-template-columns:1fr}
   .hero{padding:44px 0 40px}
   .section{padding:52px 0}
   .contact-card{padding:28px 22px}
