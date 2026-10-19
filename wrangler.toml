@@ -1,0 +1,8 @@
+name = "nexsolutions"
+compatibility_date = "2026-01-01"
+pages_build_output_dir = "."
+
+[[d1_databases]]
+binding = "beebeeb_metrics"
+database_name = "beebeeb-metrics"
+database_id = "30c73638-574a-49ca-ab6c-ca6ea0f7f8ce"

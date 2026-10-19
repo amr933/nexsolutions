@@ -124,5 +124,33 @@ img.shot { width:100%; border-radius:16px; box-shadow:0 8px 20px rgba(10,70,110,
 
   <div class="footer">All Rights Reserved - Nexus Solutions LTD</div>
 </div>
+<script>
+/* نبضة قياس تحميلات بيب بيب (صفحة التحميل فقط — لا تتتبع الطفل داخل التطبيق) */
+(function () {
+  function rid() {
+    try {
+      var r = crypto.getRandomValues(new Uint8Array(12));
+      return Array.prototype.map.call(r, function (x) { return ("0" + x.toString(16)).slice(-2); }).join("");
+    } catch (e) {
+      return String(Date.now()) + ("000000" + Math.floor(Math.random() * 1e6)).slice(-6);
+    }
+  }
+  function send(k) {
+    try {
+      fetch("/apps/beebeeb/api/track", {
+        method: "POST",
+        keepalive: true,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ k: k, r: rid() })
+      });
+    } catch (e) {}
+  }
+  send("vw");
+  var apks = document.querySelectorAll('a[href$=".apk"]');
+  for (var i = 0; i < apks.length; i++) {
+    apks[i].addEventListener("click", function () { send("dl"); });
+  }
+})();
+</script>
 </body>
 </html>
