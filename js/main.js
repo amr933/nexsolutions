@@ -52,6 +52,7 @@
     if (burger) burger.setAttribute("aria-label", lang === "ar" ? "القائمة" : "Menu");
 
     buildWhatsApp();
+    cfRender();          // ترجمة رسالة النموذج لو كانت ظاهرة
     try { localStorage.setItem(LS_LANG, lang); } catch (e) {}
   }
 
@@ -111,13 +112,19 @@
       L.details + ": " + cfValue("cf-details");
   }
 
-  function cfShow(kind, text) {
+  var cfState = null;   // { type: "ok" | "bad", key: "okWa" | "okMail" | "bad" }
+
+  function cfRender() {
     var box = document.getElementById("cfMsg");
     if (!box) return;
-    box.className = "cf-msg " + kind;
-    box.textContent = text;
+    if (!cfState) { box.hidden = true; box.textContent = ""; return; }
+    box.className = "cf-msg " + (cfState.type === "ok" ? "ok" : "bad");
+    box.textContent = CF_LABELS[currentLang()][cfState.key];
     box.hidden = false;
   }
+
+  function cfShow(type, key) { cfState = { type: type, key: key }; cfRender(); }
+  function cfClear() { cfState = null; cfRender(); }
 
   function cfValidate(lang) {
     var fields = ["cf-name", "cf-contact", "cf-details"];
@@ -129,7 +136,7 @@
       el.classList.toggle("err", empty);
       if (empty && !bad) { try { el.focus(); } catch (e) {} bad = true; }
     }
-    if (bad) cfShow("bad", CF_LABELS[lang].bad);
+    if (bad) cfShow("bad", "bad");
     return !bad;
   }
 
@@ -143,7 +150,7 @@
       if (!cfValidate(lang)) return;
       var url = "https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent(cfMessage(lang));
       window.open(url, "_blank", "noopener");
-      cfShow("ok", CF_LABELS[lang].okWa);
+      cfShow("ok", "okWa");
     });
 
     var mailBtn = document.getElementById("cfMail");
@@ -155,15 +162,16 @@
           "?subject=" + encodeURIComponent(CF_LABELS[lang].subject) +
           "&body=" + encodeURIComponent(cfMessage(lang));
         window.location.href = url;
-        cfShow("ok", CF_LABELS[lang].okMail);
+        cfShow("ok", "okMail");
       });
     }
 
-    // نشيل علامة الخطأ أول ما المستخدم يكتب
+    // نشيل علامة الخطأ والرسالة أول ما المستخدم يكتب
     var inputs = form.querySelectorAll("input, textarea, select");
     for (var i = 0; i < inputs.length; i++) {
       inputs[i].addEventListener("input", function () {
         this.classList.remove("err");
+        cfClear();
       });
     }
   }
