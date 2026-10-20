@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F9E9EA"/>
+      <stop offset="1" stop-color="#EFE7DE"/>
+    </linearGradient>
+    <linearGradient id="roof" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#D78F97"/>
+      <stop offset="1" stop-color="#C26B75"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <!-- house -->
+  <path d="M256 96 L400 210 L400 400 Q400 424 376 424 L136 424 Q112 424 112 400 L112 210 Z" fill="#FFFDFB" stroke="#E2D6C9" stroke-width="6"/>
+  <path d="M256 78 L416 204 L386 234 L256 130 L126 234 L96 204 Z" fill="url(#roof)"/>
+  <!-- window -->
+  <rect x="152" y="250" width="82" height="82" rx="18" fill="#EDE3D8"/>
+  <rect x="278" y="250" width="82" height="82" rx="18" fill="#EDE3D8"/>
+  <circle cx="193" cy="291" r="15" fill="#D9B166"/>
+  <!-- pot -->
+  <rect x="196" y="348" width="120" height="62" rx="18" fill="#87A37C"/>
+  <rect x="176" y="330" width="160" height="22" rx="11" fill="#6D8762"/>
+  <path d="M232 306 q14 -22 28 0" stroke="#C26B75" stroke-width="10" fill="none" stroke-linecap="round"/>
+  <path d="M262 296 q14 -22 28 0" stroke="#D78F97" stroke-width="10" fill="none" stroke-linecap="round"/>
+</svg>

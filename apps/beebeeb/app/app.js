@@ -3,7 +3,7 @@
 window.BB = (function () {
   "use strict";
 
-  var APK_VERSION = "2.0.2";
+  var APK_VERSION = "2.1.0";
   var MANIFEST_URL = "https://nexsolutions.pages.dev/apps/beebeeb/manifest.json";
   var LS = { pack: "bb_pack_v", stars: "bb_stars", startCount: "bb_starts", profile: "bb_profile_v1" };
 
