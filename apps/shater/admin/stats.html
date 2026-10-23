@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>لوحة تحميلات بيب بيب — Nexus Solutions</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Segoe UI", Tahoma, Arial, sans-serif; background: #0f1420; color: #eaeef7; min-height: 100vh; padding: 24px 16px; }
+  .wrap { max-width: 860px; margin: 0 auto; }
+  h1 { font-size: 22px; margin-bottom: 4px; }
+  .sub { color: #8fa0bf; font-size: 13px; margin-bottom: 20px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 22px; }
+  .card { background: #182034; border: 1px solid #263150; border-radius: 12px; padding: 14px 16px; }
+  .card .n { font-size: 30px; font-weight: 700; direction: ltr; text-align: right; }
+  .card .t { color: #8fa0bf; font-size: 12px; margin-top: 4px; line-height: 1.5; }
+  .card.main { border-color: #3b6ce7; }
+  .card.main .n { color: #7aa2ff; }
+  table { width: 100%; border-collapse: collapse; background: #182034; border: 1px solid #263150; border-radius: 12px; overflow: hidden; }
+  th, td { padding: 8px 10px; font-size: 13px; text-align: right; border-bottom: 1px solid #202a44; }
+  th { background: #1d2740; color: #a9bad9; font-weight: 600; }
+  td.n { direction: ltr; text-align: left; font-variant-numeric: tabular-nums; }
+  .bar { height: 8px; border-radius: 4px; background: #3b6ce7; min-width: 2px; display: inline-block; vertical-align: middle; }
+  .muted { color: #8fa0bf; }
+  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+  button { background: #3b6ce7; color: #fff; border: 0; border-radius: 8px; padding: 9px 16px; font-size: 14px; cursor: pointer; font-family: inherit; }
+  button:hover { background: #2f5bc9; }
+  #err { color: #ff8080; background: #2a1620; border: 1px solid #5c2437; border-radius: 10px; padding: 12px 14px; margin-bottom: 16px; display: none; }
+  footer { margin-top: 26px; color: #55648a; font-size: 12px; text-align: center; }
+  @media (max-width: 520px) { .card .n { font-size: 24px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>📊 لوحة تحميلات «شاطر»</h1>
+  <div class="sub">عدّاد من الخادم مباشرة — بدون أي أدوات خارجية — Nexus Solutions</div>
+  <div id="err"></div>
+  <div class="row">
+    <button onclick="load()">🔄 تحديث</button>
+    <button onclick="copyCSV()">📋 نسخ CSV</button>
+  </div>
+  <div class="cards">
+    <div class="card main"><div class="n" id="apk">—</div><div class="t">تحميلات فعلية لملف APK<br>(كل جهاز يُحسب مرة واحدة يومياً)</div></div>
+    <div class="card"><div class="n" id="apkAndroid">—</div><div class="t">منها من أجهزة أندرويد</div></div>
+    <div class="card"><div class="n" id="dl">—</div><div class="t">نقرات زر التحميل<br>(من صفحة التحميل)</div></div>
+    <div class="card"><div class="n" id="vw">—</div><div class="t">مُشاهدات صفحة التحميل</div></div>
+  </div>
+  <table id="tbl">
+    <thead><tr><th>اليوم</th><th>تحميل APK</th><th>نقرات</th><th>مشاهدات</th><th></th></tr></thead>
+    <tbody></tbody>
+  </table>
+  <h2 style="margin-top:22px;font-size:16px;color:#a9bad9">🌍 Top countries (by APK downloads)</h2>
+  <table id="tblC">
+    <thead><tr><th>البلد (ISO)</th><th>تحميل APK</th><th>نقرات</th><th>مشاهدات</th><th></th></tr></thead>
+    <tbody></tbody>
+  </table>
+  <p class="muted" style="margin-top:10px;font-size:12px">الحد الأقصى 30 يوماً في هذا الجدول. التاريخ بتوقيت القاهرة. تنبيه: الاسترجاع (reinstall) يُحسب تحميلاً جديداً، ومشاهدات الآيفون تُقاس بالنقر على زر الآيفون.</p>
+  <footer>All Rights Reserved - Nexus Solutions LTD</footer>
+</div>
+<script>
+(function () {
+  var T = new URLSearchParams(location.search).get("t") || "";
+  var S = null;
+  function fmt(n) { return (n === 0 || n) ? String(n) : "0"; }
+  function esc(s) { return String(s).replace(/[&<>]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]; }); }
+  function load() {
+    var err = document.getElementById("err");
+    err.style.display = "none";
+    fetch("/apps/shater/api/stats.json?t=" + encodeURIComponent(T), { cache: "no-store" })
+      .then(function (r) { if (r.status === 403) throw new Error("forbidden"); if (!r.ok) throw new Error("http " + r.status); return r.json(); })
+      .then(function (d) { S = d; render(d); })
+      .catch(function (e) {
+        err.textContent = e.message === "forbidden"
+          ? "❌ رابط غير صالح — التوكِن ناقص أو خطأ. افتح الرابط من الملف الموجود بجهازك."
+          : "❌ تعذر جلب البيانات: " + e.message;
+        err.style.display = "block";
+      });
+  }
+  function render(d) {
+    document.getElementById("apk").textContent = fmt(d.total.apk);
+    document.getElementById("apkAndroid").textContent = fmt(d.total.apkAndroid);
+    document.getElementById("dl").textContent = fmt(d.total.dl);
+    document.getElementById("vw").textContent = fmt(d.total.vw);
+    var mx = 1;
+    for (var i = 0; i < d.series.length; i++) { if (d.series[i].apk > mx) mx = d.series[i].apk; }
+    var rows = "";
+    for (var i = 0; i < d.series.length; i++) {
+      var r = d.series[i];
+      rows += "<tr><td class='n'>" + esc(r.day) + "</td>"
+           + "<td class='n'>" + fmt(r.apk) + "</td>"
+           + "<td class='n'>" + fmt(r.dl) + "</td>"
+           + "<td class='n'>" + fmt(r.vw) + "</td>"
+           + "<td><span class='bar' style='width:" + Math.max(3, Math.round(r.apk * 140 / mx)) + "px'></span></td></tr>";
+    }
+    if (!rows) rows = "<tr><td colspan='5' class='muted'>لا يوجدَت تسجيلات بعد</td></tr>";
+    document.querySelector("#tbl tbody").innerHTML = rows;
+    // Top countries
+    var cmx = 1;
+    for (var ci = 0; ci < (d.countries || []).length; ci++) { if (d.countries[ci].apk > cmx) cmx = d.countries[ci].apk; }
+    var crow = "";
+    for (var ci = 0; ci < (d.countries || []).length; ci++) {
+      var c = d.countries[ci];
+      crow += "<tr><td class='n'>" + esc(c.country || "—") + "</td>"
+           + "<td class='n'>" + fmt(c.apk) + "</td>"
+           + "<td class='n'>" + fmt(c.dl) + "</td>"
+           + "<td class='n'>" + fmt(c.vw) + "</td>"
+           + "<td><span class='bar' style='width:" + Math.max(3, Math.round(c.apk * 140 / cmx)) + "px'></span></td></tr>";
+    }
+    if (!crow) crow = "<tr><td colspan='5' class='muted'>لا توجد بيانات بعد</td></tr>";
+    document.querySelector("#tblC tbody").innerHTML = crow;
+  }
+  function copyCSV() {
+    if (!S) return;
+    var csv = "day,apk,cliсks,views\n";
+    for (var i = S.series.length - 1; i >= 0; i--) {
+      var r = S.series[i];
+      csv += r.day + "," + r.apk + "," + r.dl + "," + r.vw + "\n";
+    }
+    navigator.clipboard.writeText(csv).then(function () { alert("تم نسخ CSV ✅"); });
+  }
+  load();
+})();
+</script>
+</body>
+</html>

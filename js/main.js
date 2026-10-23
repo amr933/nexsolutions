@@ -7,7 +7,6 @@
   "use strict";
 
   var WA_NUMBER = "201040350971";           // واتساب نكسس سوليوشنز
-  var MAIL = "eng.amraladin@gmail.com";
   var LS_LANG = "nexus_lang";
   var root = document.documentElement;
 
@@ -87,14 +86,12 @@
   /* ---------- 3) نموذج التواصل ---------- */
   var CF_LABELS = {
     ar: { name: "الاسم", contact: "وسيلة التواصل", service: "الخدمة المطلوبة", details: "التفاصيل",
-          subject: "طلب من موقع نكسس سوليوشنز", intro: "السلام عليكم، هذا طلب من نموذج الموقع:",
+          intro: "السلام عليكم، هذا طلب من نموذج الموقع:",
           okWa: "تم تجهيز رسالتك — كمّل الإرسال في واتساب.",
-          okMail: "تم تجهيز بريد إلكتروني بالرسالة — كمّل الإرسال من برنامج البريد.",
           bad: "من فضلك اكمل: الاسم ووسيلة التواصل وتفاصيل المشروع." },
     en: { name: "Name", contact: "Contact", service: "Service", details: "Details",
-          subject: "Website enquiry — Nexus Solutions", intro: "Hello, this is an enquiry from the website form:",
+          intro: "Hello, this is an enquiry from the website form:",
           okWa: "Your message is ready — finish sending it in WhatsApp.",
-          okMail: "An email with your message is ready — finish sending it in your mail app.",
           bad: "Please fill in: your name, a way to reach you and the project details." }
   };
 
@@ -112,7 +109,7 @@
       L.details + ": " + cfValue("cf-details");
   }
 
-  var cfState = null;   // { type: "ok" | "bad", key: "okWa" | "okMail" | "bad" }
+  var cfState = null;   // { type: "ok" | "bad", key: "okWa" | "bad" }
 
   function cfRender() {
     var box = document.getElementById("cfMsg");
@@ -152,19 +149,6 @@
       window.open(url, "_blank", "noopener");
       cfShow("ok", "okWa");
     });
-
-    var mailBtn = document.getElementById("cfMail");
-    if (mailBtn) {
-      mailBtn.addEventListener("click", function () {
-        var lang = currentLang();
-        if (!cfValidate(lang)) return;
-        var url = "mailto:" + MAIL +
-          "?subject=" + encodeURIComponent(CF_LABELS[lang].subject) +
-          "&body=" + encodeURIComponent(cfMessage(lang));
-        window.location.href = url;
-        cfShow("ok", "okMail");
-      });
-    }
 
     // نشيل علامة الخطأ والرسالة أول ما المستخدم يكتب
     var inputs = form.querySelectorAll("input, textarea, select");
@@ -296,6 +280,24 @@
     initScrollSpy();
     initForm();
     buildWhatsApp();
+    syncVersionBadges();
+  }
+
+  /* Version badges read the live manifest of each app, so the homepage can
+     never show an older release than the one actually published. */
+  async function syncVersionBadges() {
+    const badges = document.querySelectorAll("[data-ver]");
+    for (const el of badges) {
+      try {
+        const res = await fetch(`${el.dataset.ver}?t=${Date.now()}`, { cache: "no-store" });
+        if (!res.ok) continue;
+        const manifest = await res.json();
+        const version = manifest.apkVersion || manifest.appVersion;
+        if (version) el.textContent = "v" + version;
+      } catch {
+        /* keep the static fallback */
+      }
+    }
   }
 
   if (document.readyState === "loading") {

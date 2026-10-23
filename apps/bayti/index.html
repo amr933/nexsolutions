@@ -37,6 +37,12 @@ ol,ul { padding-right:22px; line-height:2.05; }
 .footer { text-align:center; margin-top:26px; color:#6F6660; font-size:.85rem; }
 .step { font-weight:700; color:#A9555F; }
 p { margin-bottom:6px; }
+.reel { width:100%; max-width:340px; display:block; margin:6px auto 4px; border-radius:20px; background:#000; box-shadow:0 12px 28px rgba(120,95,90,.18); }
+.shots { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+.shot { background:#FBF8F4; border:1px solid #EFE7DE; border-radius:18px; padding:8px; }
+.shot img { width:100%; display:block; border-radius:12px; border:1px solid #EFE7DE; }
+.shot b { display:block; text-align:center; margin-top:7px; color:#8A424B; font-size:.86rem; font-weight:700; line-height:1.5; }
+.vcap { text-align:center; color:#8B817A; font-size:.85rem; margin-top:6px; }
 </style>
 </head>
 <body>
@@ -49,9 +55,9 @@ p { margin-bottom:6px; }
 
   <div class="card">
     <h2><span>🤖</span> لأجهزة أندرويد (هاتف وتابلت)</h2>
-    <a class="dl-btn" href="Bayti-1.0.0.apk" download>⬇️ تحميل التطبيق (أندرويد)</a>
+    <a class="dl-btn" href="Bayti-1.0.9.apk" download>⬇️ تحميل التطبيق (أندرويد)</a>
     <p class="meta" style="text-align:center;margin-top:10px">
-      الإصدار 1.0.0 &nbsp;•&nbsp; يعمل بدون إنترنت &nbsp;•&nbsp; بدون إعلانات &nbsp;•&nbsp; بياناتك على جهازك
+      الإصدار 1.0.9 &nbsp;•&nbsp; يعمل بدون إنترنت &nbsp;•&nbsp; بدون إعلانات &nbsp;•&nbsp; بياناتك على جهازك
     </p>
     <div class="note">
       🔄 <b>تحديث تلقائي:</b> التطبيق نفسه بيفحص التحديثات أول ما تفتحه، ولما تطلع نسخة جديدة بيظهرلك زر تحميل داخل التطبيق
@@ -71,6 +77,10 @@ p { margin-bottom:6px; }
       <li>في <b>Safari</b> اضغطي زر <b>المشاركة</b> ⬆️ ثم <b>«إضافة إلى الشاشة الرئيسية»</b>.</li>
       <li>التطبيق هيشتغل بملء الشاشة ويعمل بدون إنترنت.</li>
     </ol>
+    <div class="note">
+      🔄 <b>نسخة الآيفون بتتحدّث لوحدها:</b> نفس إصدار الأندرويد بالظبط — أول ما تفتحي التطبيق وهو متصل بالإنترنت، بينزّل
+      أحدث نسخة ويعيد تشغيل نفسه تلقائيًا. ولو الكاش عاند: الإعدادات ← «تحديث نسخة المتصفح / الآيفون».
+    </div>
   </div>
 
   <div class="card">
@@ -78,7 +88,7 @@ p { margin-bottom:6px; }
     <div class="grid">
       <div class="f"><b>🗓️ تخطيط الوجبات</b>خطة أسبوع وشهر بالذكاء الاصطناعي، ونقل الوجبات بالسحب.</div>
       <div class="f"><b>📖 مكتبة الوصفات</b>بحث وفلاتر وترتيب ومفضلة وأرشيف وسجل تعديلات وإصدارات.</div>
-      <div class="f"><b>📥 استيراد جماعي</b>أضفي عشرات الوصفات مرة واحدة من CSV أو JSON مع معاينة قبل الاعتماد.</div>
+      <div class="f"><b>📸 استيراد وصفة من صورة</b>صوّري صفحة الوصفة من أي كتاب أو استوديو، وتنحفظ الصورة جوه الوصفة.</div>
       <div class="f"><b>🍽️ العزومات</b>اقتراح أطباق مصاحبة، حساب الكميات، قائمة مشتريات، وجدول تحضير.</div>
       <div class="f"><b>🛒 مشتريات ذكية</b>تتبني من الخطة وتنقص الموجود في المخزون تلقائيًا.</div>
       <div class="f"><b>🏷️ مقارنة الأسعار</b>سعر الكيلو/اللتر، مقارنة سلة كاملة، وتاريخ سعر لكل منتج.</div>
@@ -90,12 +100,33 @@ p { margin-bottom:6px; }
   </div>
 
   <div class="card">
+    <h2><span>🎬</span> شوف بيتي من جوه</h2>
+    <video class="reel" controls playsinline preload="none" poster="shots/assistant.png">
+      <source src="videos/bayti-tour.mp4" type="video/mp4">
+      متصفحك لا يدعم عرض الفيديو — <a href="videos/bayti-tour.mp4" download>حمل الجولة هنا</a>
+    </video>
+    <p class="vcap">جولة داخل التطبيق (‏18 ثانية) — لقطات حقيقية بلا أي تعديل</p>
+
+    <div class="shots" style="margin-top:16px">
+      <div class="shot"><img src="shots/home.png" alt="الرئيسية في تطبيق بيتي" loading="lazy"><b>الصفحة الرئيسية — كل حاجة في مكان واحد</b></div>
+      <div class="shot"><img src="shots/assistant.png" alt="المساعد الذكي في بيتي" loading="lazy"><b>المساعد الذكي — يجيب من بيتك الحقيقي</b></div>
+      <div class="shot"><img src="shots/meals.png" alt="تخطيط الوجبات في بيتي" loading="lazy"><b>تخطيط الوجبات — أسبوع أو شهر بضغطة</b></div>
+      <div class="shot"><img src="shots/recipes.png" alt="مكتبة الوصفات في بيتي" loading="lazy"><b>مكتبة الوصفات — بحث وفلاتر ومفضلة</b></div>
+      <div class="shot"><img src="shots/pantry.png" alt="المخزون في بيتي" loading="lazy"><b>المخزون — تنبيهات الصلاحية والنقص</b></div>
+      <div class="shot"><img src="shots/recipe-editor.png" alt="إضافة وصفة في بيتي" loading="lazy"><b>إضافة وصفة — المكونات والخطوات بخط واضح</b></div>
+      <div class="shot"><img src="shots/welcome.png" alt="شاشة الإعداد في بيتي" loading="lazy"><b>لا تسجيل دخول — تعريف بسيط في دقيقة</b></div>
+      <div class="shot"><img src="shots/sections.png" alt="كل أقسام بيتي" loading="lazy"><b>12 قسم — العزومات، الفريزر، الأسعار، الميزانية…</b></div>
+    </div>
+    <p class="meta" style="margin-top:10px">اللقطات دي من النسخة الحالية 1.0.9 — شاشة واجهة المشروع نفسها بلا تصاميم خارجية.</p>
+  </div>
+
+  <div class="card">
     <h2><span>🔒</span> الخصوصية</h2>
     <ul>
       <li>كل بياناتك محفوظة على جهازك — التطبيق يعمل بالكامل بدون إنترنت.</li>
       <li>مفيش إعلانات ولا تتبّع ولا مشاركة بيانات مع أي طرف تاني.</li>
       <li>تقدري تاخدي نسخة احتياطية بملف واحد وتسترجعيها في أي وقت.</li>
-      <li>تسجيل الدخول بجوجل (اختياري) — مفاتيحه مش بتتحفظ في التطبيق.</li>
+      <li>مش مطلوب تسجيل دخول — افتحي التطبيق وابدئي الاستخدام فوراً.</li>
     </ul>
   </div>
 
@@ -103,5 +134,33 @@ p { margin-bottom:6px; }
     بيتي © Nexus Solutions — كل الحقوق محفوظة
   </div>
 </div>
+<script>
+(function () {
+  function rid() {
+    try {
+      var r = crypto.getRandomValues(new Uint8Array(12));
+      return Array.prototype.map.call(r, function (x) { return ("0" + x.toString(16)).slice(-2); }).join("");
+    } catch (e) {
+      return String(Date.now()) + ("000000" + Math.floor(Math.random() * 1e6)).slice(-6);
+    }
+  }
+  function send(k) {
+    try {
+      fetch("/apps/bayti/api/track", {
+        method: "POST",
+        keepalive: true,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ k: k, r: rid() })
+      });
+    } catch (e) {}
+  }
+  send("vw");
+  var apks = document.querySelectorAll('a[href$=".apk"]');
+  for (var i = 0; i < apks.length; i++) {
+    apks[i].addEventListener("click", function () { send("dl"); });
+  }
+})();
+</script>
 </body>
 </html>
+
