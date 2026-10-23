@@ -196,6 +196,13 @@ p{color:var(--ink-soft)}
 .p-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
 .product-card .btn.small{box-shadow:none}
 .product-card .btn.small:not(.wa-link){background:var(--accent);color:#fff}
+.p-mobile{margin-top:18px;padding-top:16px;border-top:1px dashed var(--line)}
+.p-mobile-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.p-mobile-label{font-size:.84rem;font-weight:800;color:var(--ink-soft)}
+.p-mobile-ver{font-size:.72rem;font-weight:800;color:var(--brand);background:var(--accent-soft);border-radius:999px;padding:3px 9px}
+.p-mobile .p-actions{margin-top:10px}
+.p-mobile-note{margin-top:10px;font-size:.82rem;line-height:1.7;color:var(--ink-soft)}
+.product-card .btn.small.alt{background:#fff;color:var(--ink);border-color:var(--line)}
 
 /* ---------- حلولنا التقنية ---------- */
 .sol-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
